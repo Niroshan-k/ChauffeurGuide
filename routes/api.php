@@ -6,6 +6,7 @@ use App\Http\Controllers\GuideController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\RedemptionController;
+use App\Http\Controllers\SearchController;
 use App\Http\Controllers\VisitController;
 
 // --- Public routes (no auth needed) ---
@@ -43,9 +44,11 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::get('/admin/guides', [GuideController::class, 'index']);
     Route::get('/admin/guides/{id}', [GuideController::class, 'show']);
     Route::get('/admin/guides/{id}/redemption', [RedemptionController::class, 'show']);
-    Route::get('/admin/guides/search', [GuideController::class, 'search']);
+    Route::get('/admin/guide/search', [SearchController::class, 'guide']);
+    Route::get('/test-query', function (\Illuminate\Http\Request $request) {
+        return response()->json(['q' => $request->input('q')]);
+    });
     
-
     // Admin updates visit and tourist count
     Route::post('/admin/guides/{id}/update-activity', [AdminController::class, 'updateActivity']);
 });

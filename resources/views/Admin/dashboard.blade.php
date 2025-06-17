@@ -1,130 +1,134 @@
 <!-- filepath: /Applications/XAMPP/xamppfiles/htdocs/ChauffeurGuide_RewardPlatform/resources/views/Admin/dashboard.blade.php -->
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
-    <title>Admin Dashboard - Guides</title>
+    <title>Guide Dashboard</title>
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
 </head>
-<body class="bg-gray-100 min-h-screen">
-    <header class="flex items-center justify-between px-8 py-6 bg-white shadow">
-        <button onclick="window.location.href='/admin/add-guide'" class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700">
-            Add Guide
-        </button>
-    </header>
-    <main class="px-8 py-6">
-        <div class="max-w-3xl mx-auto mt-8 mb-4">
-            <form id="searchForm" class="flex gap-2">
-                <input type="text" id="searchInput" class="flex-1 px-4 py-2 border-2 border-blue-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 transition" placeholder="Search guides by name or ID...">
-                <button type="submit" class="bg-blue-600 text-white px-6 py-2 rounded-lg font-bold hover:bg-blue-700 transition">Search</button>
-            </form>
-            <div id="searchResults" class="mt-4"></div>
+
+<body class="bg-gradient-to-br from-blue-50 via-yellow-50 to-blue-100 min-h-screen flex">
+    <!-- Main Content -->
+    <main class="flex-1 p-10">
+        <!-- Header -->
+        <div class="flex flex-col md:flex-row md:items-center md:justify-between mb-8">
+            <div>
+                <h1 class="text-3xl font-extrabold text-blue-700 mb-2">Welcome, Admin!</h1>
+                <p class="text-gray-600">Manage guides, view details, and search for users below.</p>
+            </div>
+
+            <div class="mt-4 md:mt-0">
+                <form id="searchForm" class="flex items-center gap-2">
+                    <div class="relative flex-1">
+                        <input
+                            type="text"
+                            id="searchInput"
+                            class="w-72 px-5 py-3 pl-12 border-2 border-blue-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-400 transition text-lg"
+                            placeholder="Search by name or ID..."
+                            autocomplete="off">
+                        <svg class="w-6 h-6 absolute left-3 top-1/2 transform -translate-y-1/2 text-blue-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                            <circle cx="11" cy="11" r="8" />
+                            <path d="M21 21l-4.35-4.35" />
+                        </svg>
+                    </div>
+                    <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white font-bold px-6 py-3 rounded-xl transition">
+                        Search
+                    </button>
+                </form>
+            </div>
         </div>
-        <h2 class="text-2xl font-bold mb-6 text-blue-700">All Guides</h2>
-        <div id="guidesList" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
-        <div id="error" class="text-red-500 mt-4"></div>
+        <a href="/admin/add-guide" class="flex items-center gap-2 px-4 py-2 rounded-lg text-gray-600 hover:bg-blue-50 transition">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <path d="M12 4v16m8-8H4" />
+            </svg>
+            Add Guide
+        </a>
+        <!-- Search Status -->
+        <div id="searchStatus" class="text-center mb-4"></div>
+        <!-- User Cards -->
+        <div id="searchResults" class="grid grid-cols-1 md:grid-cols-2 gap-6"></div>
     </main>
     <script>
+        const searchForm = document.getElementById('searchForm');
+        const searchInput = document.getElementById('searchInput');
+        const searchResults = document.getElementById('searchResults');
+        const searchStatus = document.getElementById('searchStatus');
         const token = localStorage.getItem('admin_token');
-        const guidesList = document.getElementById('guidesList');
-        const errorDiv = document.getElementById('error');
-        let allGuides = [];
 
-        async function fetchGuides() {
-            if (!token) {
-                errorDiv.textContent = 'You must be logged in as admin.';
-                return;
+        // Optionally, load all guides on page load
+        window.addEventListener('DOMContentLoaded', () => {
+            searchGuides('');
+        });
+
+        searchForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            searchGuides(searchInput.value.trim());
+        });
+
+        async function searchGuides(query) {
+            searchResults.innerHTML = '';
+            searchStatus.innerHTML = '';
+            if (!query) {
+                searchStatus.innerHTML = '<span class="text-gray-500">Showing all guides.</span>';
+            } else {
+                searchStatus.innerHTML = `
+                    <span class="flex items-center justify-center gap-2 text-blue-500">
+                        <svg class="animate-spin h-5 w-5 text-blue-500" viewBox="0 0 24 24">
+                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" fill="none"/>
+                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z"/>
+                        </svg>
+                        Searching...
+                    </span>
+                `;
             }
             try {
-                const response = await fetch('/api/admin/guides', {
+                const url = query ?
+                    '/api/admin/guide/search?q=' + encodeURIComponent(query) :
+                    '/api/admin/guides';
+                const response = await fetch(url, {
                     headers: {
                         'Authorization': 'Bearer ' + token,
                         'Accept': 'application/json'
                     }
                 });
                 const data = await response.json();
+                searchStatus.innerHTML = '';
                 if (!response.ok) {
-                    errorDiv.textContent = data.message || 'Failed to fetch guides.';
+                    searchStatus.innerHTML = `<span class="text-red-500">${data.message || 'Search failed.'}</span>`;
                     return;
                 }
-                allGuides = data.guides;
-                renderGuides(allGuides);
-            } catch (err) {
-                errorDiv.textContent = 'Network error';
-            }
-        }
-
-        function renderGuides(guides) {
-            guidesList.innerHTML = '';
-            if (!guides.length) {
-                guidesList.innerHTML = '<div class="col-span-full text-center text-gray-500">No guides found.</div>';
-                return;
-            }
-            guides.forEach(guide => {
-                guidesList.innerHTML += `
-                    <div class="bg-white rounded-lg shadow p-6 flex items-center space-x-4 cursor-pointer hover:bg-blue-50 transition"
+                if (!data.guides || data.guides.length === 0) {
+                    searchStatus.innerHTML = `<span class="text-yellow-600 font-semibold">No guides found.</span>`;
+                    return;
+                }
+                // Render user cards
+                searchResults.innerHTML = data.guides.map(guide => `
+                    <div class="bg-white/90 rounded-2xl shadow-lg p-6 flex flex-col gap-3 hover:shadow-2xl transition cursor-pointer border border-blue-100"
                          onclick="window.location.href='/admin/guide/${guide.id}/update'">
-                        <div>
-                            ${guide.profile_photo 
-                                ? `<img src="/storage/${guide.profile_photo}" alt="Profile" class="w-16 h-16 rounded-full object-cover">`
+                        <div class="flex items-center gap-4 mb-2">
+                            ${guide.profile_photo
+                                ? `<img src="/storage/${guide.profile_photo}" alt="Profile" class="w-16 h-16 rounded-full object-cover border-2 border-blue-300">`
                                 : `<div class="w-16 h-16 rounded-full bg-gray-200 flex items-center justify-center text-gray-400 text-2xl">?</div>`
                             }
+                            <div>
+                                <div class="text-xl font-bold text-blue-800">${guide.full_name}</div>
+                                <div class="text-gray-600 text-sm">ID: <span class="font-mono">${guide.id}</span></div>
+                                <div class="text-gray-500 text-xs">${guide.email || ''}</div>
+                            </div>
                         </div>
-                        <div>
-                            <div class="font-bold text-lg">${guide.full_name}</div>
-                            <div class="text-gray-600">ID: ${guide.id}</div>
-                            <div class="text-gray-500 text-sm">${guide.email || ''}</div>
+                        <div class="flex flex-col gap-1 text-gray-700 text-sm">
+                            <div><span class="font-semibold">Mobile:</span> ${guide.mobile_number || '-'}</div>
+                            <div><span class="font-semibold">WhatsApp:</span> ${guide.whatsapp_number || '-'}</div>
                         </div>
-                    </div>
-                `;
-            });
-        }
-
-        document.getElementById('searchForm').addEventListener('submit', async function(e) {
-            e.preventDefault();
-            const query = document.getElementById('searchInput').value.trim();
-            const token = localStorage.getItem('admin_token');
-            const resultsDiv = document.getElementById('searchResults');
-            resultsDiv.innerHTML = '';
-
-            if (!query) {
-                resultsDiv.innerHTML = '<div class="text-gray-500">Please enter a name or ID to search.</div>';
-                return;
-            }
-
-            try {
-                const response = await fetch(`/api/admin/guides/search?q=${encodeURIComponent(query)}`, {
-                    headers: {
-                        'Authorization': 'Bearer ' + token,
-                        'Accept': 'application/json'
-                    }
-                });
-                const data = await response.json();
-                if (!response.ok || !data.guides.length) {
-                    resultsDiv.innerHTML = '<div class="text-red-500">No guides found.</div>';
-                    return;
-                }
-                // Show results
-                resultsDiv.innerHTML = data.guides.map(guide => `
-                    <div class="bg-white rounded-lg shadow p-4 flex items-center gap-4 mb-2 cursor-pointer hover:bg-blue-50 transition"
-                         onclick="window.location.href='/admin/guides/${guide.id}/edit'">
-                        ${guide.profile_photo
-                            ? `<img src="/storage/${guide.profile_photo}" alt="Profile" class="w-12 h-12 rounded-full object-cover">`
-                            : `<div class="w-12 h-12 rounded-full bg-gray-200 flex items-center justify-center text-gray-400 text-xl">?</div>`
-                        }
-                        <div>
-                            <div class="font-bold">${guide.full_name}</div>
-                            <div class="text-gray-600 text-sm">ID: ${guide.id}</div>
-                            <div class="text-gray-500 text-xs">${guide.email || ''}</div>
-                        </div>
+                        <button class="mt-3 bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 rounded-lg transition">View Profile</button>
                     </div>
                 `).join('');
             } catch (err) {
-                resultsDiv.innerHTML = '<div class="text-red-500">Network error.</div>';
+                searchStatus.innerHTML = `<span class="text-red-500">Network error.</span>`;
             }
-        });
-
-        fetchGuides();
+        }
     </script>
 </body>
+
 </html>

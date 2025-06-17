@@ -121,9 +121,6 @@ class GuideController extends Controller
     public function search(Request $request)
     {
         $query = $request->input('q');
-        \Log::info('Search query:', ['q' => $request->input('q')]);
-        dd($request->all());
-
         $guides = \App\Models\Guide::where(function ($qB) use ($query) {
             $qB->whereRaw('LOWER(full_name) LIKE ?', ['%' . strtolower($query) . '%'])
                ->orWhere('id', $query);
