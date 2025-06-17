@@ -49,12 +49,33 @@ class GuideController extends Controller
 
     public function index()
     {
-        return Guide::with('visits', 'redemptions')->get();
+        $guides = \App\Models\Guide::all();
+        return response()->json([
+            'guides' => $guides
+        ]);
     }
 
     public function show($id)
     {
-        return Guide::with('visits', 'redemptions')->findOrFail($id);
+        $guide = \App\Models\Guide::find($id);
+
+        if (!$guide) {
+            return response()->json(['message' => 'Guide not found'], 404);
+        }
+
+        $redemption = \App\Models\Redemption::where('guide_id', $id)->first();
+
+        return response()->json([
+            'full_name' => $guide->full_name,
+            'mobile_number' => $guide->mobile_number,
+            'date_of_birth' => $guide->date_of_birth,
+            'email' => $guide->email,
+            'whatsapp_number' => $guide->whatsapp_number,
+            'profile_photo' => $guide->profile_photo,
+            'created_at' => $guide->created_at,
+            'updated_at' => $guide->updated_at,
+            'redemption' => $redemption
+        ]);
     }
 
     public function update(Request $request, $id)
@@ -77,7 +98,6 @@ class GuideController extends Controller
         }
 
         $guide->update($data);
-
         return response()->json(['message' => 'Guide updated successfully.', 'guide' => $guide]);
     }
 
@@ -97,5 +117,18 @@ class GuideController extends Controller
     {
         Auth::guard('guide')->logout();
         return response()->json(['message' => 'Logged out.']);
+    }
+    public function search(Request $request)
+    {
+        $query = $request->input('q');
+        \Log::info('Search query:', ['q' => $request->input('q')]);
+        dd($request->all());
+
+        $guides = \App\Models\Guide::where(function ($qB) use ($query) {
+            $qB->whereRaw('LOWER(full_name) LIKE ?', ['%' . strtolower($query) . '%'])
+               ->orWhere('id', $query);
+        })->get();
+
+        return response()->json(['guides' => $guides]);
     }
 }

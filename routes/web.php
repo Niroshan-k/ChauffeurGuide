@@ -11,7 +11,7 @@ Route::get('/', function () {
 Route::get('/guide/login', function () {
     return view('guide.login');
 });
-Route::get('/guide/dashboard', function () { 
+Route::get('/guide/dashboard/{id}', function () { 
     return view('guide.dashboard'); 
 });
 Route::post('/guide/redeem', [RedemptionController::class, 'redeem']);
@@ -21,6 +21,12 @@ Route::get('/admin/dashboard', function () {
 });
 Route::get('/admin/login', function () {
     return view('admin.login');
+});
+Route::get('admin/add-guide', function () {
+    return view('admin.addguide');
+});
+Route::get('admin/guide/{id}/update', function () {
+    return view('admin.update');
 });
 
 // Route::get('/login', function () {

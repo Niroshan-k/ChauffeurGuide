@@ -59,4 +59,20 @@ class RedemptionController extends Controller
     {
         return Redemption::where('guide_id', $guideId)->orderByDesc('redeemed_at')->get();
     }
+    /**
+     * Show the redemption details for a specific guide.
+     */
+
+    public function show($id)
+    {
+        $redemption = \App\Models\Redemption::where('guide_id', $id)->first();
+
+        if (!$redemption) {
+            return response()->json(['message' => 'Redemption not found'], 404);
+        }
+
+        return response()->json([
+            'redemption' => $redemption
+        ]);
+    }
 }

@@ -37,7 +37,7 @@
                 } else {
                     // Store the token in localStorage
                     localStorage.setItem('guide_token', data.token);
-                    window.location.href = '/guide/dashboard';
+                    window.location.href = `/guide/dashboard/${data.user.id}`;
                 }
             } catch (err) {
                 document.getElementById('error').textContent = 'Network error';

@@ -24,7 +24,7 @@ Route::post('/admin/login', [AuthController::class, 'adminLogin']);
 Route::middleware(['auth:sanctum'])->group(function () {
 
     // Guide dashboard
-    Route::get('/guide/dashboard', [GuideController::class, 'dashboard']);
+    Route::get('/guide/{id}/dashboard', [GuideController::class, 'show']);
 
     // Redeem points
     Route::post('/guide/{guide_id}/redeem', [RedemptionController::class, 'store']);
@@ -33,7 +33,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
 
 // --- Protected routes for admins ---
 Route::middleware(['auth:sanctum'])->group(function () {
-
+    
     // Admin guide management
     Route::post('/admin/guides', [GuideController::class, 'store']);
     Route::put('/admin/guides/{id}', [GuideController::class, 'update']);
@@ -42,6 +42,8 @@ Route::middleware(['auth:sanctum'])->group(function () {
 
     Route::get('/admin/guides', [GuideController::class, 'index']);
     Route::get('/admin/guides/{id}', [GuideController::class, 'show']);
+    Route::get('/admin/guides/{id}/redemption', [RedemptionController::class, 'show']);
+    Route::get('/admin/guides/search', [GuideController::class, 'search']);
     
 
     // Admin updates visit and tourist count
