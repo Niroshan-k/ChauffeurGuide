@@ -4,12 +4,31 @@
 namespace App\Http\Controllers;
 
 use App\Models\Guide;
+use App\Models\Visit;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Carbon\Carbon;
 use Twilio\Rest\Client;
 
 class GuideController extends Controller
 {
+    public function dashboard()
+    {
+        $guideCount = Guide::count();
+        $guideMax = 100;
+
+        $visitCount = Visit::count();
+
+        $guides = \App\Models\Guide::with(['visits', 'redemptions'])->withCount('visits')->get();
+
+        // Monthly visits (current month)
+        $monthlyVisitCount = Visit::whereMonth('created_at', Carbon::now()->month)
+                                ->whereYear('created_at', Carbon::now()->year)
+                                ->count();
+
+        return view('admin.dashboard', compact('guideCount', 'guideMax', 'visitCount', 'monthlyVisitCount','guides'));
+    }
+
     // Admin creates guide
     public function store(Request $request)
     {
@@ -49,10 +68,7 @@ class GuideController extends Controller
 
     public function index()
     {
-        $guides = \App\Models\Guide::all();
-        return response()->json([
-            'guides' => $guides
-        ]);
+        
     }
 
     public function show($id)
@@ -128,4 +144,5 @@ class GuideController extends Controller
 
         return response()->json(['guides' => $guides]);
     }
+    
 }

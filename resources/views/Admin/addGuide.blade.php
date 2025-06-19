@@ -5,8 +5,9 @@
     <title>Add Guide</title>
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
 </head>
-<body class="bg-gray-100 min-h-screen flex items-center justify-center">
-    <div class="max-w-lg mx-auto mt-12 bg-white/90 rounded-3xl shadow-2xl p-8">
+@include('layouts.header')
+<body class="bg-gray-100 min-h-screen flex justify-center">
+    <div class="mt-32 mb-20 bg-white/90 rounded-3xl shadow-2xl p-8">
         <h2 class="text-2xl font-bold text-blue-700 mb-6 text-center">Add New Guide</h2>
         <form id="profileForm" class="space-y-5" enctype="multipart/form-data" method="POST">
             <div>

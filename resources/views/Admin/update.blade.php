@@ -5,76 +5,84 @@
     <title>Guide Details & Management</title>
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
 </head>
-<body class="bg-gray-100 min-h-screen">
-    <div class="max-w-5xl mx-auto py-10 px-4">
-        <!-- Top Profile Section -->
+@include('layouts.header')
+<body class="bg-gradient-to-br from-gray-50 to-blue-100 min-h-screen">
+    <div class="max-w-6xl mx-auto py-12 px-6">
+        <!-- Profile Section -->
         <div class="flex flex-col items-center mb-10">
-            <div id="profilePhotoPreview" class="w-32 h-32 rounded-full bg-gray-200 flex items-center justify-center text-gray-400 text-4xl overflow-hidden mb-2 shadow"></div>
-            <h2 class="text-3xl font-bold text-blue-700 mb-1" id="guideName">Guide Details</h2>
-            <div class="text-gray-500 text-sm" id="guideId"></div>
+            <div id="profilePhotoPreview" class="w-36 h-36 rounded-full mt-12 bg-gray-200 flex items-center justify-center text-gray-400 text-5xl overflow-hidden shadow-lg border-4 border-white"></div>
+            <h2 class="text-3xl font-extrabold text-blue-800 mt-4" id="guideName">Guide Details</h2>
+            <p class="text-gray-600 text-sm" id="guideId"></p>
         </div>
-        <!-- Main Content: Left profile form, right forms -->
-        <div class="flex flex-col md:flex-row gap-8">
-            <!-- Left: Editable Profile Form & Actions -->
-            <div class="md:w-1/2 bg-white rounded-xl shadow-lg p-6 flex flex-col gap-4">
-                <form id="updateGuideForm" class="space-y-4" enctype="multipart/form-data">
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-10">
+            <!-- Left Section -->
+            <div class="bg-white rounded-3xl shadow-xl p-8 space-y-6">
+                <h3 class="text-xl font-bold text-blue-700 mb-4">Edit Profile</h3>
+                <form id="updateGuideForm" enctype="multipart/form-data" class="space-y-4">
                     <div>
-                        <label class="block text-gray-700">Full Name</label>
-                        <input type="text" name="full_name" id="full_name" class="w-full px-3 py-2 border rounded" required>
+                        <label class="block text-sm font-medium text-gray-700">Full Name</label>
+                        <input type="text" name="full_name" id="full_name" class="w-full mt-1 px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-400" required>
                     </div>
                     <div>
-                        <label class="block text-gray-700">Mobile Number</label>
-                        <input type="text" name="mobile_number" id="mobile_number" class="w-full px-3 py-2 border rounded" required>
+                        <label class="block text-sm font-medium text-gray-700">Mobile Number</label>
+                        <input type="text" name="mobile_number" id="mobile_number" class="w-full mt-1 px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-400" required>
                     </div>
                     <div>
-                        <label class="block text-gray-700">Date of Birth</label>
-                        <input type="date" name="date_of_birth" id="date_of_birth" class="w-full px-3 py-2 border rounded">
+                        <label class="block text-sm font-medium text-gray-700">Date of Birth</label>
+                        <input type="date" name="date_of_birth" id="date_of_birth" class="w-full mt-1 px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-400">
                     </div>
                     <div>
-                        <label class="block text-gray-700">Email</label>
-                        <input type="email" name="email" id="email" class="w-full px-3 py-2 border rounded">
+                        <label class="block text-sm font-medium text-gray-700">Email</label>
+                        <input type="email" name="email" id="email" class="w-full mt-1 px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-400">
                     </div>
                     <div>
-                        <label class="block text-gray-700">WhatsApp Number</label>
-                        <input type="text" name="whatsapp_number" id="whatsapp_number" class="w-full px-3 py-2 border rounded">
+                        <label class="block text-sm font-medium text-gray-700">WhatsApp Number</label>
+                        <input type="text" name="whatsapp_number" id="whatsapp_number" class="w-full mt-1 px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-400">
                     </div>
                     <div>
-                        <label class="block text-gray-700">Profile Photo</label>
-                        <input type="file" name="profile_photo" id="profile_photo" accept="image/*" class="w-full">
+                        <label class="block text-sm font-medium text-gray-700">Profile Photo</label>
+                        <input type="file" name="profile_photo" id="profile_photo" accept="image/*" class="w-full mt-1 text-sm">
                     </div>
-                    <div id="error" class="text-red-500 text-sm"></div>
-                    <div class="flex gap-2">
-                        <button type="submit" class="bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-700 font-semibold">Update Guide</button>
-                        <button type="button" id="removeGuideBtn" class="bg-red-600 text-white py-2 px-4 rounded hover:bg-red-700 font-semibold">Remove Guide</button>
+                    <div id="error" class="text-red-600 text-sm font-semibold"></div>
+                    <div class="flex gap-4 mt-6">
+                        <button type="submit" class="flex-1 bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-xl font-semibold">Update Guide</button>
+                        <button type="button" id="removeGuideBtn" class="flex-1 bg-red-600 hover:bg-red-700 text-white py-2 rounded-xl font-semibold">Remove Guide</button>
                     </div>
                 </form>
             </div>
-            <!-- Right: Add Visit & Redemption Info -->
-            <div class="md:w-1/2 flex flex-col gap-8">
-                <!-- Add Visit Form -->
-                <div class="bg-white rounded-xl shadow-lg p-6">
-                    <h3 class="text-xl font-semibold mb-4 text-blue-700 text-center">Add Visit</h3>
+
+            <!-- Right Section -->
+            <div class="space-y-10">
+                <!-- Add Visit -->
+                <div class="bg-white rounded-3xl shadow-xl p-8">
+                    <h3 class="text-xl font-bold text-blue-700 mb-4 text-center">Add Visit</h3>
                     <form id="addVisitForm" class="space-y-4">
                         <div>
-                            <label class="block text-gray-700">Visit Date</label>
-                            <input type="date" name="visit_date" id="visit_date" class="w-full px-3 py-2 border rounded" required>
+                            <label class="block text-sm font-medium text-gray-700">Visit Date</label>
+                            <input type="date" name="visit_date" id="visit_date" class="w-full mt-1 px-4 py-2 border rounded-lg focus:ring-2 focus:ring-green-400" required>
                         </div>
                         <div>
-                            <label class="block text-gray-700">Tourist Count</label>
-                            <input type="number" name="pax_count" id="pax_count" class="w-full px-3 py-2 border rounded" min="1" required>
+                            <label class="block text-sm font-medium text-gray-700">Tourist Count</label>
+                            <input type="number" name="pax_count" id="pax_count" class="w-full mt-1 px-4 py-2 border rounded-lg focus:ring-2 focus:ring-green-400" min="1" required>
                         </div>
-                        <div id="visitError" class="text-red-500 text-sm"></div>
-                        <button type="submit" class="w-full bg-green-600 text-white py-2 rounded hover:bg-green-700">Add Visit</button>
+                        <div id="visitError" class="text-red-600 text-sm font-semibold"></div>
+                        <button type="submit" class="w-full bg-green-600 hover:bg-green-700 text-white py-2 rounded-xl font-semibold mt-2">Add Visit</button>
                     </form>
                 </div>
+
                 <!-- Redemption Info -->
-                <div class="bg-white rounded-xl shadow-lg p-6">
-                    <h3 class="text-xl font-semibold mb-4 text-blue-700 text-center">Redemption Info</h3>
-                    <div>
-                        <div class="font-semibold text-gray-700 mb-1">Redeemed At:</div>
-                        <div id="redeemedAtDetail" class="mb-2"></div>
-                        <div class="font-semibold text-gray-700 mb-1">Points:</div>
-                        <div id="pointsDetail" class="mb-2"></div>
+                <div class="bg-white rounded-3xl shadow-xl p-8">
+                    <h3 class="text-xl font-bold text-blue-700 mb-4 text-center">Redemption Info</h3>
+                    <div class="space-y-3 text-gray-700">
+                        <div>
+                            <span class="font-semibold">Redeemed At:</span>
+                            <span id="redeemedAtDetail" class="ml-1"></span>
+                        </div>
+                        <div>
+                            <span class="font-semibold">Points:</span>
+                            <span id="pointsDetail" class="ml-1"></span>
+                        </div>
                     </div>
                 </div>
             </div>
