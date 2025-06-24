@@ -7,6 +7,8 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use App\Models\Guide;
+use App\Models\Item;
 
 class Redemption extends Model
 {
@@ -24,6 +26,10 @@ class Redemption extends Model
     public function guide()
     {
         return $this->belongsTo(Guide::class);
+    }
+    public function item()
+    {
+        return $this->belongsTo(Item::class);
     }
 }
 

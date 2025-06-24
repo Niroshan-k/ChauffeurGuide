@@ -60,4 +60,19 @@ class AdminController extends Controller
     {
         //
     }
+    public function addItem(Request $request)
+    {
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'description' => 'nullable|string',
+            'price' => 'required|numeric|min:0',
+        ]);
+
+        $item = \App\Models\Item::create($validated);
+
+        return response()->json([
+            'message' => 'Item added successfully',
+            'item' => $item,
+        ], 201);
+    }
 }

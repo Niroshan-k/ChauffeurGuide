@@ -13,12 +13,21 @@
     <!-- Main Content -->
     <main class="flex-1 p-10">
         <div class="flex mt-24 flex-col md:flex-row md:items-center md:justify-between mb-8">
-            <a href="/admin/add-guide" class="flex items-center gap-2 px-4 py-3 bg-black rounded-lg text-white transition">
+            <div class="flex items-center gap-4">
+                <a href="/admin/add-guide" class="flex items-center gap-2 px-4 py-3 bg-black rounded-lg text-white transition">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                     <path d="M12 4v16m8-8H4" />
                 </svg>
                 Add Guide
-            </a>
+                </a>
+                <a href="/admin/add-item" class="flex items-center gap-2 px-4 py-3 bg-black rounded-lg text-white transition">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <path d="M12 4v16m8-8H4" />
+                    </svg>
+                    Add Items
+                </a>
+            </div>
+        
             <div class="mt-4 md:mt-0">
                 <form id="searchForm" class="flex items-center gap-2">
                     <div class="relative flex-1">
@@ -158,7 +167,7 @@
                                     onclick="addVisit({{ $guide->id }})"
                                     type="button"
                                 >
-                                    Add Visit
+                                    Add Visit for Today
                                 </button>
                                 <a href="{{ url('/admin/guide/' . $guide->id . '/update') }}"
                                    class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-2 rounded-lg font-semibold shadow transition ml-2">

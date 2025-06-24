@@ -8,6 +8,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\RedemptionController;
 use App\Http\Controllers\SearchController;
 use App\Http\Controllers\VisitController;
+use App\Http\Controllers\ItemController;
 
 // --- Public routes (no auth needed) ---
 
@@ -40,6 +41,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::put('/admin/guides/{id}', [GuideController::class, 'update']);
     Route::delete('/admin/guides/{id}', [GuideController::class, 'destroy']);
     Route::post('admin/visits', [VisitController::class, 'store']);
+    Route::post('/admin/items', [ItemController::class, 'store']); 
 
     Route::get('/admin/guides', [GuideController::class, 'index']);
     Route::get('/admin/guides/{id}', [GuideController::class, 'show']);

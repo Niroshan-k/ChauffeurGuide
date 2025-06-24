@@ -24,6 +24,9 @@ Route::get('/admin/login', function () {
 Route::get('admin/add-guide', function () {
     return view('admin.addguide');
 });
+Route::get('admin/add-item', function () {
+    return view('admin.additem');
+});
 Route::get('admin/guide/{id}/update', function () {
     return view('admin.update');
 });

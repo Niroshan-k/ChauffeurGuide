@@ -9,6 +9,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Carbon\Carbon;
 use Twilio\Rest\Client;
+use App\Models\Item;
 
 class GuideController extends Controller
 {
@@ -74,7 +75,7 @@ class GuideController extends Controller
     public function show($id)
     {
         $guide = \App\Models\Guide::find($id);
-
+        $items = \App\Models\Item::all();
         if (!$guide) {
             return response()->json(['message' => 'Guide not found'], 404);
         }
@@ -82,15 +83,19 @@ class GuideController extends Controller
         $redemption = \App\Models\Redemption::where('guide_id', $id)->first();
 
         return response()->json([
-            'full_name' => $guide->full_name,
-            'mobile_number' => $guide->mobile_number,
-            'date_of_birth' => $guide->date_of_birth,
-            'email' => $guide->email,
-            'whatsapp_number' => $guide->whatsapp_number,
-            'profile_photo' => $guide->profile_photo,
-            'created_at' => $guide->created_at,
-            'updated_at' => $guide->updated_at,
-            'redemption' => $redemption
+            'guide' => [
+                'full_name' => $guide->full_name,
+                'mobile_number' => $guide->mobile_number,
+                'date_of_birth' => $guide->date_of_birth,
+                'email' => $guide->email,
+                'whatsapp_number' => $guide->whatsapp_number,
+                'profile_photo' => $guide->profile_photo,
+                'created_at' => $guide->created_at,
+                'updated_at' => $guide->updated_at,
+                'pointsRemaining' => $guide->pointsRemaining(), // <-- Add this line
+            ],
+            'redemption' => $redemption,
+            'items' => $items
         ]);
     }
 
