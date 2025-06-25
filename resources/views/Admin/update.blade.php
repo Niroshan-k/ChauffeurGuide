@@ -113,7 +113,7 @@
                 errorDiv.textContent = guide.message || 'Failed to fetch guide.';
                 return;
             }
-            fillGuideForm(guide);
+            fillGuideForm(guide.guide);
         } catch (err) {
             errorDiv.textContent = 'Network error';
         }

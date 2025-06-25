@@ -41,7 +41,10 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::put('/admin/guides/{id}', [GuideController::class, 'update']);
     Route::delete('/admin/guides/{id}', [GuideController::class, 'destroy']);
     Route::post('admin/visits', [VisitController::class, 'store']);
-    Route::post('/admin/items', [ItemController::class, 'store']); 
+    Route::post('/admin/items', [ItemController::class, 'store']);
+    Route::get('/admin/items', [ItemController::class, 'index']);
+    Route::put('/admin/items/{id}', [ItemController::class, 'update']);
+    Route::delete('/admin/items/{id}', [ItemController::class, 'destroy']);
 
     Route::get('/admin/guides', [GuideController::class, 'index']);
     Route::get('/admin/guides/{id}', [GuideController::class, 'show']);

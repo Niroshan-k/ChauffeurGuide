@@ -15,7 +15,7 @@
 
 <body class="min-h-screen flex flex-col items-center">
     <!-- Header -->
-    <header class="w-full bg-white/90 fixed shadow-md py-4 px-8 flex items-center justify-between z-50">
+    <header class="w-full bg-white fixed shadow-md py-4 px-8 flex items-center justify-between z-50">
         <div class="flex items-center gap-3">
             <img src="/storage/appImages/logo.png" alt="Logo" class="h-10">
         </div>
@@ -87,7 +87,7 @@
                 <div class="w-28 h-28 sm:w-32 sm:h-32 rounded-full bg-gray-200 flex items-center justify-center text-gray-400 text-4xl overflow-hidden mb-4 shadow-lg border-4 border-yellow-300">
                     ${guide.profile_photo ? `<img src="/storage/${guide.profile_photo}" class="w-full h-full object-cover rounded-full">` : '?'}
                 </div>
-                <h2 class="text-2xl sm:text-3xl font-extrabold text-yellow-700 mb-2 text-center">${guide.full_name}</h2>
+                <h2 class="text-2xl sm:text-3xl font-extrabold text-yellow-700 mb-2 text-center">Hello, ${guide.full_name}</h2>
                 <div class="flex flex-col gap-3 w-full mt-4 text-sm sm:text-base">
                     <div class="flex items-center gap-2">
                         <svg class="w-5 h-5 text-blue-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" /></svg>
@@ -117,22 +117,22 @@
             let itemsHtml = '';
             items.forEach(item => {
                 itemsHtml += `
-                <div class="flex items-center gap-3">
-                    <input type="checkbox" class="item-checkbox" id="item_${item.id}" value="${item.id}" data-points="${item.points}">
-                    <label for="item_${item.id}" class="flex-1 cursor-pointer">
-                        ${item.name} <span class="text-gray-500">(${item.points} pts)</span>
+                <div class="flex items-center gap-3 py-3 px-2 border border-gray-400 rounded-xl">
+                    <label for="item_${item.id}" class="flex-1 cursor-pointer text-xl">
+                    ${item.name} <span class="text-gray-500">(${item.points} pts)</span>
                     </label>
+                    <input type="checkbox" class="item-checkbox" id="item_${item.id}" value="${item.id}" data-points="${item.points}">
                 </div>
             `;
             });
 
             document.getElementById('redemptionSection').innerHTML = `
             <div class="bg-gradient-to-r from-blue-100 to-blue-50 rounded-2xl shadow-lg p-6 mb-8">
-                <div class="flex items-center gap-2 mb-3">
+                <div class="flex items-center justify-center gap-2 mb-4">
+                    <h3 class="text-lg sm:text-xl font-bold text-blue-700">Redemption Info</h3>
                     <svg class="w-6 h-6 text-blue-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                         <path d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                     </svg>
-                    <h3 class="text-lg sm:text-xl font-bold text-blue-700">Redemption Info</h3>
                 </div>
                 <div class="flex flex-col gap-1 text-sm sm:text-base">
                     <div>
@@ -140,13 +140,13 @@
                         <span id="guidePoints" class="ml-1 text-blue-800 font-bold">${pointsRemaining}</span>
                     </div>
                     <div>
-                        <span class="font-semibold text-gray-700">Redeemed At:</span>
+                        <span class="font-semibold text-gray-700">Last Redeemed At:</span>
                         <span id="redeemedAt" class="ml-1 text-gray-700">${redeemedAt}</span>
                     </div>
                 </div>
             </div>
             <div class="mx-auto bg-gradient-to-r from-green-100 to-green-50 rounded-2xl shadow-xl p-8">
-                <h2 class="text-xl font-bold text-blue-700 mb-6 text-center">Redeem Items</h2>
+                <h2 class="text-xl font-bold text-blue-700 mb-6 text-center">Redeem Items 🎁</h2>
                 <form id="redeemForm" class="space-y-4">
                     <div class="space-y-2">${itemsHtml}</div>
                     <div class="mt-4 flex items-center justify-between">

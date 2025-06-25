@@ -4,7 +4,7 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>Guide Dashboard</title>
+    <title>Admin Dashboard</title>
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
 </head>
 @include('layouts.header')
@@ -25,6 +25,9 @@
                         <path d="M12 4v16m8-8H4" />
                     </svg>
                     Add Items
+                </a>
+                <a href="/admin/update/item" class="flex items-center gap-2 px-4 py-3 bg-black rounded-lg text-white transition">
+                    Edit Items
                 </a>
             </div>
         
@@ -131,12 +134,13 @@
             <table class="min-w-full divide-y divide-blue-100">
                 <thead class="bg-blue-50">
                     <tr>
-                        <th class="px-6 py-4 text-left text-xs font-bold text-blue-700 uppercase tracking-wider">Profile</th>
-                        <th class="px-6 py-4 text-left text-xs font-bold text-blue-700 uppercase tracking-wider">Name</th>
-                        <th class="px-6 py-4 text-left text-xs font-bold text-blue-700 uppercase tracking-wider">ID</th>
-                        <th class="px-6 py-4 text-center text-xs font-bold text-blue-700 uppercase tracking-wider">Visits</th>
-                        <th class="px-6 py-4 text-center text-xs font-bold text-blue-700 uppercase tracking-wider">Points</th>
-                        <th class="px-6 py-4 text-center text-xs font-bold text-blue-700 uppercase tracking-wider">Actions</th>
+                        <th class="px-6 py-4 text-left text-xl font-bold text-blue-700 uppercase tracking-wider">Profile</th>
+                        <th class="px-6 py-4 text-left text-xl font-bold text-blue-700 uppercase tracking-wider">Name</th>
+                        <th class="px-6 py-4 text-left text-xl font-bold text-blue-700 uppercase tracking-wider">ID</th>
+                        <th class="px-6 py-4 text-center text-xl font-bold text-blue-700 uppercase tracking-wider">Visits</th>
+                        <th class="px-6 py-4 text-center text-xl font-bold text-blue-700 uppercase tracking-wider">Points</th>
+                        <!-- <th class="px-6 py-4 text-center text-xl font-bold text-blue-700 uppercase tracking-wider">Pax count</th> -->
+                        <th class="px-6 py-4 text-center text-xl font-bold text-blue-700 uppercase tracking-wider">Actions</th>
                     </tr>
                 </thead>
                 <tbody class="bg-white divide-y divide-blue-50">
@@ -157,6 +161,7 @@
                             <td class="px-6 py-4 text-center text-yellow-500 font-bold">
                                 {{ $guide->redemptions->sum('points') ?? 0 }}
                             </td>
+                            
                             <td class="px-6 py-4 flex gap-2 justify-center items-center">
                                 <input type="number" min="1" value="1"
                                     class="w-20 px-2 py-1 border border-blue-200 rounded focus:ring-2 focus:ring-blue-400"
