@@ -100,6 +100,30 @@ class RedemptionController extends Controller
         $redemption->redeemed_at = now();
         $redemption->save();
 
+        // Send WhatsApp congratulation message
+        try {
+            $twilio = new \Twilio\Rest\Client(env('TWILIO_SID'), env('TWILIO_AUTH_TOKEN'));
+
+            $mobile = $guide->mobile_number;
+            if (strpos($mobile, '+') !== 0) {
+                // Assuming Sri Lanka numbers, add +94 if not present
+                $mobile = '+94' . ltrim($mobile, '0');
+            }
+
+            $itemNames = $items->pluck('name')->toArray();
+            $itemList = implode(', ', $itemNames);
+
+            $twilio->messages->create(
+                'whatsapp:' . $mobile,
+                [
+                    'from' => env('TWILIO_WHATSAPP_FROM'),
+                    'body' => "Congratulations! You have redeemed: {$itemList}. Thank you for using Chauffeur Guide!"
+                ]
+            );
+        } catch (\Exception $e) {
+            // Optionally log or handle the error
+        }
+
         return response()->json([
             'message' => 'Redemption successful.',
             'redemption' => $redemption

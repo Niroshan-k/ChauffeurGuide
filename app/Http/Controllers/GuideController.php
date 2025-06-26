@@ -53,11 +53,18 @@ class GuideController extends Controller
         //Send WhatsApp welcome message
         try {
             $twilio = new Client(env('TWILIO_SID'), env('TWILIO_AUTH_TOKEN'));
+            
+            $mobile = $guide->mobile_number;
+            if (strpos($mobile, '+') !== 0) {
+                // Assuming Sri Lanka numbers, add +94 if not present
+                $mobile = '+94' . ltrim($mobile, '0');
+            }
+
             $twilio->messages->create(
-                'whatsapp:' . $guide->mobile_number, // recipient in international format
+                'whatsapp:' . $mobile,
                 [
                     'from' => env('TWILIO_WHATSAPP_FROM'),
-                    'body' => "Welcome to Chauffeur Guide! Download our app here: https://your-app-link.com"
+                    'body' => "Welcome to Chauffeur Guide! Download our app here: https://link.com"
                 ]
             );
         } catch (\Exception $e) {
