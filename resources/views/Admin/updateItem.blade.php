@@ -5,17 +5,17 @@
     <title>Update Items</title>
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
 </head>
-<body class="bg-gradient-to-br from-blue-50 via-yellow-50 to-blue-100 min-h-screen flex flex-col items-center">
+<body class=" min-h-screen flex flex-col items-center">
     @include('layouts.header')
     <main class="flex-1 flex items-center justify-center w-full">
         <div class="mx-auto mt-16 w-full max-w-2xl">
-            <a href="/admin/add-item" class="flex max-w-2xl mb-5 items-center gap-2 px-4 py-3 bg-black rounded-lg text-white transition hover:bg-gray-800 shadow">
+            <a href="/admin/add-item" class="flex w-64 mb-5 items-center gap-2 px-4 py-3 bg-black rounded-lg text-white transition hover:bg-gray-800 shadow">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                     <path d="M12 4v16m8-8H4" />
                 </svg>
                 Add Items
             </a>
-            <div class="bg-white/90 rounded-2xl shadow-xl p-8">
+            <div class="bg-white/90 border rounded-2xl shadow-xl p-8">
                 <h2 class="text-2xl font-bold text-blue-700 mb-6 text-center">Update Items</h2>
                 <div id="itemStatus" class="text-center text-sm mb-4"></div>
                 <div id="itemsList" class="space-y-6"></div>

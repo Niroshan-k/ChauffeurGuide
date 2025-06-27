@@ -9,7 +9,7 @@
 </head>
 @include('layouts.header')
 
-<body class="bg-gradient-to-br from-blue-50 via-yellow-50 to-blue-100 min-h-screen flex">
+<body class="bg-white min-h-screen flex">
     <!-- Main Content -->
     <main class="flex-1 p-10">
         <div class="flex mt-24 flex-col md:flex-row md:items-center md:justify-between mb-8">

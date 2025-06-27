@@ -5,23 +5,23 @@
     <meta charset="UTF-8">
     <title>Guide Dashboard</title>
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <style>
         body {
             min-height: 100vh;
-            background: linear-gradient(135deg, #fef9c3 0%, #e0e7ff 100%);
         }
     </style>
 </head>
 
 <body class="min-h-screen flex flex-col items-center">
     <!-- Header -->
-    <header class="w-full bg-white fixed shadow-md py-4 px-8 flex items-center justify-between z-50">
+    <header class="w-full bg-white fixed shadow py-4 px-8 flex items-center justify-between z-50">
         <div class="flex items-center gap-3">
             <img src="/storage/appImages/logo.png" alt="Logo" class="h-10">
         </div>
         <div class="flex items-center gap-4">
             <a href="https://instagram.com/yourprofile" target="_blank"
-                class="bg-gradient-to-tr from-pink-500 via-red-500 to-yellow-500 text-white px-4 py-2 rounded-lg font-semibold shadow transition flex items-center gap-2">
+                class="bg-gradient-to-tr from-pink-500 via-red-500 to-yellow-500 text-white px-4 py-2 rounded-lg font-semibold shadowansition flex items-center gap-2">
                 <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
                     <path
                         d="M7.75 2h8.5A5.75 5.75 0 0 1 22 7.75v8.5A5.75 5.75 0 0 1 16.25 22h-8.5A5.75 5.75 0 0 1 2 16.25v-8.5A5.75 5.75 0 0 1 7.75 2zm0 1.5A4.25 4.25 0 0 0 3.5 7.75v8.5A4.25 4.25 0 0 0 7.75 20.5h8.5A4.25 4.25 0 0 0 20.5 16.25v-8.5A4.25 4.25 0 0 0 16.25 3.5h-8.5zm4.25 3.25a5.25 5.25 0 1 1 0 10.5 5.25 5.25 0 0 1 0-10.5zm0 1.5a3.75 3.75 0 1 0 0 7.5 3.75 3.75 0 0 0 0-7.5zm5.25.75a1 1 0 1 1 0 2h-1.5a1 1 0 0 1 0-2h1.5z" />
@@ -29,7 +29,7 @@
                 Instagram
             </a>
             <button onclick="logout()"
-                class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg font-semibold shadow transition">
+                class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg font-semibold shadowansition">
                 Logout
             </button>
         </div>
@@ -44,6 +44,10 @@
         <!-- Profile Update Section -->
         <div id="profileUpdateSection" class="w-full max-w-2xl mt-8"></div>
     </main>
+
+    <footer class="w-full p-5 text-center">
+        <p>Powered by Engage Lanka<sup class="text-small">SM</sup></p>
+    </footer>
 
     <script>
         function logout() {
@@ -83,26 +87,26 @@
 
         function renderProfileSection(guide) {
             document.getElementById('profileSection').innerHTML = `
-            <div class="flex flex-col items-center bg-gradient-to-b from-yellow-200 to-yellow-50 rounded-2xl shadow-lg p-6">
-                <div class="w-28 h-28 sm:w-32 sm:h-32 rounded-full bg-gray-200 flex items-center justify-center text-gray-400 text-4xl overflow-hidden mb-4 shadow-lg border-4 border-yellow-300">
+            <div class="flex flex-col items-center border rounded-2xl shadow p-6">
+                <div class="w-28 h-28 sm:w-32 sm:h-32 rounded-full bg-gray-200 flex items-center justify-center text-gray-400 text-4xl overflow-hidden mb-4 shadow border-4 border-yellow-300">
                     ${guide.profile_photo ? `<img src="/storage/${guide.profile_photo}" class="w-full h-full object-cover rounded-full">` : '?'}
                 </div>
                 <h2 class="text-2xl sm:text-3xl font-extrabold text-yellow-700 mb-2 text-center">Hello, ${guide.full_name}</h2>
                 <div class="flex flex-col gap-3 w-full mt-4 text-sm sm:text-base">
                     <div class="flex items-center gap-2">
-                        <svg class="w-5 h-5 text-blue-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" /></svg>
+                        <i class="fa-solid fa-envelope"></i>
                         <span class="text-gray-700 break-all">${guide.email}</span>
                     </div>
                     <div class="flex items-center gap-2">
-                        <svg class="w-5 h-5 text-green-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M3 5a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H5a2 2 0 01-2-2V5zm0 12a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H5a2 2 0 01-2-2v-2zm12-12a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V5zm0 12a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" /></svg>
+                        <i class="fa-solid fa-comment-sms"></i>
                         <span class="text-gray-700">${guide.mobile_number}</span>
                     </div>
                     <div class="flex items-center gap-2">
-                        <svg class="w-5 h-5 text-pink-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 8c-1.657 0-3 1.343-3 3 0 2.25 3 6 3 6s3-3.75 3-6c0-1.657-1.343-3-3-3z" /><circle cx="12" cy="11" r="3" /></svg>
+                        <i class="fa-solid fa-cake-candles"></i>
                         <span class="text-gray-700">${guide.date_of_birth}</span>
                     </div>
                     <div class="flex items-center gap-2">
-                        <svg class="w-5 h-5 text-green-600" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M16 12a4 4 0 01-8 0V8a4 4 0 018 0v4z" /><path d="M12 16v2m0 0h-2m2 0h2" /></svg>
+                        <i class="fa-brands fa-whatsapp"></i>
                         <span class="text-gray-700">${guide.whatsapp_number}</span>
                     </div>
                 </div>
@@ -117,7 +121,7 @@
             let itemsHtml = '';
             items.forEach(item => {
                 itemsHtml += `
-                <div class="flex items-center gap-3 py-3 px-2 border border-gray-400 rounded-xl">
+                <div class="flex items-center gap-3 mb-3 py-3 px-4 border shadow border-gray-200 rounded-full">
                     <label for="item_${item.id}" class="flex-1 cursor-pointer text-xl">
                     ${item.name} <span class="text-gray-500">(${item.points} pts)</span>
                     </label>
@@ -127,7 +131,7 @@
             });
 
             document.getElementById('redemptionSection').innerHTML = `
-            <div class="bg-gradient-to-r from-blue-100 to-blue-50 rounded-2xl shadow-lg p-6 mb-8">
+            <div class=" border rounded-2xl shadow p-6 mb-8">
                 <div class="flex items-center justify-center gap-2 mb-4">
                     <h3 class="text-lg sm:text-xl font-bold text-blue-700">Redemption Info</h3>
                     <svg class="w-6 h-6 text-blue-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
@@ -145,8 +149,8 @@
                     </div>
                 </div>
             </div>
-            <div class="mx-auto bg-gradient-to-r from-green-100 to-green-50 rounded-2xl shadow-xl p-8">
-                <h2 class="text-xl font-bold text-blue-700 mb-6 text-center">Redeem Items 🎁</h2>
+            <div class="mx-auto border  rounded-2xl shadow p-8">
+                <h2 class="text-xl font-bold text-blue-700 mb-6 text-center">Redeem Items <i class="fa-solid fa-gift"></i> </h2>
                 <form id="redeemForm" class="space-y-4">
                     <div class="space-y-2">${itemsHtml}</div>
                     <div class="mt-4 flex items-center justify-between">
@@ -237,10 +241,9 @@
 
         function renderProfileUpdateSection(guide) {
             document.getElementById('profileUpdateSection').innerHTML = `
-            <div class="mx-auto bg-gradient-to-r from-purple-100 to-purple-50 rounded-2xl shadow-xl mb-10 p-8 flex flex-col items-center gap-6">
+            <div class="mx-auto border rounded-2xl shadow mb-10 p-8 flex flex-col items-center gap-6">
                 <div class="relative">
-                    <img id="profilePhotoPreview" src="/storage/${guide.profile_photo || ''}" alt="Profile" class="w-24 h-24 rounded-full object-cover border-4 border-blue-200 shadow">
-                    <label class="absolute bottom-0 right-0 bg-blue-600 hover:bg-blue-700 text-white rounded-full p-2 cursor-pointer shadow transition">
+                    <img id="profilePhotoPreview" src="/storage/${guide.profile_photo || ''}" alt="Profile" class="w-24 h-24 rounded-full object-cover border-4 border-blue-200 shadow                    <label class="absolute bottom-0 right-0 bg-blue-600 hover:bg-blue-700 text-white rounded-full p-2 cursor-pointer shadowansition">
                         <input type="file" id="profile_photo" accept="image/*" class="hidden">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M15.232 5.232l3.536 3.536M9 11l6 6M3 17v4h4l11-11a2.828 2.828 0 10-4-4L3 17z"/></svg>
                     </label>
@@ -250,7 +253,7 @@
                     <input type="text" id="full_name" class="w-full px-4 py-3 border-2 border-blue-200 rounded-lg focus:ring-2 focus:ring-blue-400 transition" value="${guide.full_name}">
                 </div>
                 <div class="w-full flex flex-col items-center gap-2">
-                    <button id="updateProfileBtn" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-8 rounded-xl transition flex items-center justify-center gap-2">
+                    <button id="updateProfileBtn" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-8 rounded-xl transition w-full flex items-center justify-center gap-2">
                         <span id="updateBtnText">Update</span>
                         <svg id="updateSpinner" class="hidden animate-spin h-5 w-5 text-white" viewBox="0 0 24 24">
                             <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" fill="none"/>
