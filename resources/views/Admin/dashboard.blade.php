@@ -163,6 +163,7 @@
                             </td>
                             
                             <td class="px-6 py-4 flex gap-2 justify-center items-center">
+                                <span>Tourist Count:</span>
                                 <input type="number" min="1" value="1"
                                     class="w-20 px-2 py-1 border border-blue-200 rounded focus:ring-2 focus:ring-blue-400"
                                     id="visit_count_{{ $guide->id }}"

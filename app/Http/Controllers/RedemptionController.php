@@ -117,7 +117,10 @@ class RedemptionController extends Controller
                 'whatsapp:' . $mobile,
                 [
                     'from' => env('TWILIO_WHATSAPP_FROM'),
-                    'body' => "Congratulations! You have redeemed: {$itemList}. Thank you for using Chauffeur Guide!"
+                    'contentSid' => 'HXa265a3ead6889d9f10cbc576f34c4373',
+                    'contentVariables' => json_encode([ 
+                        '1' => $itemList                     
+                    ]),
                 ]
             );
         } catch (\Exception $e) {

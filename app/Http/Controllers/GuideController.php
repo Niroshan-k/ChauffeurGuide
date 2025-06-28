@@ -60,11 +60,16 @@ class GuideController extends Controller
                 $mobile = '+94' . ltrim($mobile, '0');
             }
 
+            $dashboardLink = 'https://your-app-link.com/dashboard'; // or dynamically generated link
+
             $twilio->messages->create(
                 'whatsapp:' . $mobile,
                 [
                     'from' => env('TWILIO_WHATSAPP_FROM'),
-                    'body' => "Welcome to Chauffeur Guide! Download our app here: https://link.com"
+                    'contentSid' => 'HX4e215b7f3d45ad4d0a4c67b9e81212c9', 
+                    'contentVariables' => json_encode([
+                        '1' => $dashboardLink
+                    ]),
                 ]
             );
         } catch (\Exception $e) {
