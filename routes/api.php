@@ -56,6 +56,10 @@ Route::middleware(['auth:sanctum'])->group(function () {
     
     // Admin updates visit and tourist count
     Route::post('/admin/guides/{id}/update-activity', [AdminController::class, 'updateActivity']);
+    Route::get('/admin/dashboard-stats', [AdminController::class, 'getDashboardStats']);
+    Route::get('/admin/report/pdf', [AdminController::class, 'generatePDFReport']);
+    Route::get('/admin/report/excel', [AdminController::class, 'generateExcelReport']);
+    Route::get('/admin/guides', [AdminController::class, 'getGuides']);
 });
 
 // --- Public route to create an admin ---

@@ -281,11 +281,38 @@
             }
         }
 
+        // Function to refresh dashboard data
+        async function refreshDashboard() {
+            try {
+                const response = await fetch('/api/admin/dashboard-stats', {
+                    headers: {
+                        'Authorization': 'Bearer ' + token,
+                        'Accept': 'application/json'
+                    }
+                });
+                const data = await response.json();
+                
+                // Update stats
+                document.querySelector('.text-blue-700').textContent = data.guideCount;
+                document.querySelector('.text-green-700').textContent = data.visitCount;
+                document.querySelector('.text-purple-700').textContent = data.monthlyVisitCount;
+                
+                // Refresh guide table
+                searchGuides('');
+                
+            } catch (error) {
+                console.error('Error refreshing dashboard:', error);
+            }
+        }
+
+        // Refresh every 30 seconds
+        setInterval(refreshDashboard, 30000);
+
+        // Also refresh after adding visits
         function addVisit(guideId) {
             const countInput = document.getElementById('visit_count_' + guideId);
             const count = parseInt(countInput.value) || 1;
             const token = localStorage.getItem('admin_token');
-            // Always send today's date in YYYY-MM-DD format
             const today = new Date().toISOString().slice(0, 10);
 
             fetch('/api/admin/visits', {
@@ -298,13 +325,14 @@
                 body: JSON.stringify({
                     guide_id: guideId,
                     pax_count: count,
-                    visit_date: today // Always today's date
+                    visit_date: today
                 })
             })
             .then(response => response.json())
             .then(data => {
                 if (data.success || data.status === 'success') {
                     alert('Visit(s) added for today!');
+                    refreshDashboard(); // Refresh after successful addition
                 } else {
                     alert(data.message || 'Failed to add visit.');
                 }

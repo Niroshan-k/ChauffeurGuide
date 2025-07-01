@@ -4,10 +4,16 @@
 <head>
     <meta charset="UTF-8">
     <title>Admin Login</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     @vite(['resources/css/app.css'])
 </head>
-<body class="bg-gray-100 min-h-screen flex items-center justify-center">
-    <div class="w-full max-w-md bg-white rounded-lg shadow-lg p-8">
+<main class="min-h-screen flex items-center justify-center">
+    <a href="/" class="fixed left-5 top-5 flex bg-black text-white text-2xl rounded-full items-center gap-3 px-3 py-2">
+            <i class="fa-solid fa-angle-left"></i>
+            <p>Back</p>
+    </a>
+    
+    <div class="w-full max-w-md p-8">
         <h2 class="text-2xl font-bold mb-6 text-center text-gray-800">Admin Login</h2>
         <form id="loginForm" class="space-y-5">
             <div>
@@ -59,5 +65,10 @@
             }
         });
     </script>
-</body>
+</main>
+<footer>
+    <div class="mt-8 pb-8 text-center text-gray-600">
+        &copy; 2025 Engage Lanka, a subsidiary of Softmaster Technologies (Pvt) Ltd. All rights reserved.
+    </div>
+</footer>
 </html>

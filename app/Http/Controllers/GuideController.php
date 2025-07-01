@@ -30,6 +30,118 @@ class GuideController extends Controller
         return view('admin.dashboard', compact('guideCount', 'guideMax', 'visitCount', 'monthlyVisitCount','guides'));
     }
 
+    public function dashboard1()
+    {
+        $guideCount = Guide::count();
+        $guideMax = 100;
+
+        $visitCount = Visit::count();
+
+        $guides = \App\Models\Guide::with(['visits', 'redemptions'])->withCount('visits')->get();
+
+        // Monthly visits (current month)
+        $monthlyVisitCount = Visit::whereMonth('created_at', Carbon::now()->month)
+        ->whereYear('created_at', Carbon::now()->year)
+        ->count();
+
+        // Total tourists count (sum of pax_count)
+        $touristCount = Visit::sum('pax_count');
+       
+        // Monthly visits and tourists (current month)
+        $currentMonth = Carbon::now();
+        $monthlyVisitCount = Visit::whereMonth('created_at', $currentMonth->month)
+        ->whereYear('created_at', $currentMonth->year)
+        ->count();
+
+        // Monthly tourists count
+        $monthlyTouristCount = Visit::whereMonth('created_at', $currentMonth->month)
+        ->whereYear('created_at', $currentMonth->year)
+        ->sum('pax_count');
+
+        // Get top 5 guides by total pax count
+        $topGuides = Guide::select([
+            'guides.id',
+            'guides.full_name',
+            'guides.mobile_number',
+            'guides.email',
+            'guides.profile_photo'
+        ])
+            ->leftJoin('visits', 'guides.id', '=', 'visits.guide_id')
+            ->selectRaw('COALESCE(SUM(visits.pax_count), 0) as total_pax')
+            ->groupBy('guides.id', 'guides.full_name', 'guides.mobile_number', 'guides.email', 'guides.profile_photo')
+            ->orderByDesc('total_pax')
+            ->limit(5)
+            ->get();
+
+        // Get last 12 months of tourist data
+        $monthlyTourists = Visit::selectRaw('
+            DATE_FORMAT(created_at, "%Y-%m") as month,
+            SUM(pax_count) as tourist_count
+        ')
+        ->where('created_at', '>=', Carbon::now()->subMonths(11)->startOfMonth())
+        ->where('created_at', '<=', Carbon::now()->endOfMonth())
+        ->groupBy('month')
+        ->orderBy('month')
+        ->get()
+        ->keyBy('month');
+
+        // Create array of last 12 months with tourist counts
+        $monthlyData = collect([]);
+        for ($i = 11; $i >= 0; $i--) {
+            $date = Carbon::now()->subMonths($i);
+            $yearMonth = $date->format('Y-m');
+            $monthlyData->push([
+                'month' => $date->format('M Y'), // Format: Mar 2025
+                'tourist_count' => $monthlyTourists->get($yearMonth)?->tourist_count ?? 0
+            ]);
+        }
+
+        // Get total guide count
+        $guideCount = Guide::count();
+        
+        // Get this month's new guides count
+        $monthlyNewGuides = Guide::whereMonth('created_at', Carbon::now()->month)
+            ->whereYear('created_at', Carbon::now()->year)
+            ->count();
+
+        // Get monthly guide data for the last 12 months
+        $monthlyGuides = Guide::selectRaw('
+            DATE_FORMAT(created_at, "%Y-%m") as month,
+            COUNT(*) as guide_count
+        ')
+        ->where('created_at', '>=', Carbon::now()->subMonths(11)->startOfMonth())
+        ->where('created_at', '<=', Carbon::now()->endOfMonth())
+        ->groupBy('month')
+        ->orderBy('month')
+        ->get()
+        ->keyBy('month');
+
+        // Create array of last 12 months with guide counts
+        $monthlyGuideData = collect([]);
+        for ($i = 11; $i >= 0; $i--) {
+            $date = Carbon::now()->subMonths($i);
+            $yearMonth = $date->format('Y-m');
+            $monthlyGuideData->push([
+                'month' => $date->format('M Y'),
+                'guide_count' => $monthlyGuides->get($yearMonth)?->guide_count ?? 0
+            ]);
+        }
+
+        return view('admin.dashboard1', compact(
+            'guideCount',
+            'guideMax',
+            'visitCount',
+            'touristCount',
+            'monthlyVisitCount',
+            'monthlyTouristCount',
+            'guides',
+            'topGuides',
+            'monthlyData',
+            'monthlyNewGuides',     // Add this
+            'monthlyGuideData'      // Add this
+        ));
+    }
+
     // Admin creates guide
     public function store(Request $request)
     {
