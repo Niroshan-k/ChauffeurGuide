@@ -24,23 +24,6 @@ class GuideController extends Controller
 
         // Monthly visits (current month)
         $monthlyVisitCount = Visit::whereMonth('created_at', Carbon::now()->month)
-                                ->whereYear('created_at', Carbon::now()->year)
-                                ->count();
-
-        return view('admin.dashboard', compact('guideCount', 'guideMax', 'visitCount', 'monthlyVisitCount','guides'));
-    }
-
-    public function dashboard1()
-    {
-        $guideCount = Guide::count();
-        $guideMax = 100;
-
-        $visitCount = Visit::count();
-
-        $guides = \App\Models\Guide::with(['visits', 'redemptions'])->withCount('visits')->get();
-
-        // Monthly visits (current month)
-        $monthlyVisitCount = Visit::whereMonth('created_at', Carbon::now()->month)
         ->whereYear('created_at', Carbon::now()->year)
         ->count();
 
@@ -127,7 +110,7 @@ class GuideController extends Controller
             ]);
         }
 
-        return view('admin.dashboard1', compact(
+        return view('admin.dashboard', compact(
             'guideCount',
             'guideMax',
             'visitCount',

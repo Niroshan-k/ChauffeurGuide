@@ -35,8 +35,6 @@ Route::get('/admin/update/item', function () {
     return view('admin.updateitem');
 });
 
-Route::get('/admin/dashboard1', [GuideController::class, 'dashboard1']);
-
 
 // Route::get('/login', function () {
 //     return view('Admin.login'); // or your login view
