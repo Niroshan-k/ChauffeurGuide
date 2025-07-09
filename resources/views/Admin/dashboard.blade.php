@@ -10,45 +10,112 @@
         const token = localStorage.getItem('admin_token');
         if (!token) window.location.href = '/guide/login';
     </script>
+    <style>
+        .nav-item.active {
+            background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+            color: white;
+            transform: translateX(4px);
+            box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3);
+        }
+        
+        .nav-item.active .w-10 {
+            background: rgba(255, 255, 255, 0.2);
+        }
+        
+        .nav-item.active i {
+            color: white;
+        }
+        
+        .stat-card {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .glass-effect {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        /* Floating animation for stat cards */
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-5px); }
+        }
+        
+        .float-animation {
+            animation: float 6s ease-in-out infinite;
+        }
+        
+        /* Gradient text effect */
+        .gradient-text {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+    </style>
 </head>
 
-<body class="flex bg-gray-100 min-h-screen">
+<body class="flex bg-gradient-to-br from-slate-50 to-blue-50 min-h-screen">
     <!-- Hamburger Button -->
-    <button id="hamburger" class="fixed top-4 left-4 z-50 md:hidden bg-blue-600 text-white p-3 rounded-lg shadow-lg">
+    <button id="hamburger" class="fixed top-4 left-4 z-50 md:hidden bg-gradient-to-r from-blue-600 to-blue-700 text-white p-3 rounded-xl shadow-lg hover:shadow-xl transition-all duration-200">
         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
         </svg>
     </button>
 
     <!-- Sidebar with toggle functionality -->
-    <aside id="sidebar" class="w-72 bg-white shadow-lg flex flex-col justify-between fixed h-full transform -translate-x-full md:translate-x-0 transition-transform duration-300 ease-in-out z-40">
+    <aside id="sidebar" class="w-72 bg-white/95 backdrop-blur-lg shadow-2xl flex flex-col justify-between fixed h-full transform -translate-x-full md:translate-x-0 transition-transform duration-300 ease-in-out z-40 border-r border-blue-100">
         <!-- Close button for mobile -->
-        <button id="closeSidebar" class="absolute top-4 right-4 md:hidden text-gray-500 hover:text-gray-700">
+        <button id="closeSidebar" class="absolute top-4 right-4 md:hidden text-gray-500 hover:text-gray-700 transition-colors duration-200">
             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
             </svg>
         </button>
         
-        <div class="p-6 flex flex-col items-center">
-            <img src="{{ asset('storage/appImages/logo.png') }}" alt="Logo" class="w-20 mb-4">
-            <nav class="flex mt-10 flex-col w-full gap-3">
-                <button onclick="showSection('dashboard')" class="flex gap-2 items-center w-full px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
-                    <i class="fa-solid fa-chart-line"></i>Dashboard
+        <div class="p-6 flex flex-col border-b border-blue-100">
+            <!-- Logo -->
+            <div class="mb-2">
+                <img src="/storage/appImages/logo.png" alt="Logo" class="w-40 h-auto">
+                <h1 class="text-sm mt-2 text-gray-600"><i class="fas fa-user-shield mr-2"></i>Admin Panel</h1>
+            </div>
+            
+        </div>
+        
+        <div class="flex-1 p-6">
+            <nav class="space-y-2">
+                <button onclick="showSection('dashboard')" class="nav-item active flex items-center w-full px-4 py-3 text-left rounded-xl transition-all duration-200 hover:bg-blue-50 hover:shadow-sm">
+                    <div class="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center mr-3">
+                        <i class="fa-solid fa-chart-simple text-blue-600"></i>
+                    </div>
+                    <span class="font-medium text-gray-700">Dashboard</span>
                 </button>
-                <button onclick="showSection('guides')" class="flex gap-2 items-center w-full px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
-                    <i class="fa-solid fa-user-tie"></i> Guidess
+                <button onclick="showSection('guides')" class="nav-item flex items-center w-full px-4 py-3 text-left rounded-xl transition-all duration-200 hover:bg-blue-50 hover:shadow-sm">
+                    <div class="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center mr-3">
+                        <i class="fa-solid fa-user-tie text-green-600"></i>
+                    </div>
+                    <span class="font-medium text-gray-700">Guides</span>
                 </button>
-                <button onclick="showSection('items')" class="flex gap-2 items-center w-full px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
-                    <i class="fa-solid fa-gifts"></i>Items
+                <button onclick="showSection('items')" class="nav-item flex items-center w-full px-4 py-3 text-left rounded-xl transition-all duration-200 hover:bg-blue-50 hover:shadow-sm">
+                    <div class="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center mr-3">
+                        <i class="fa-solid fa-gifts text-purple-600"></i>
+                    </div>
+                    <span class="font-medium text-gray-700">Items</span>
                 </button>
             </nav>
         </div>
-        <div class="p-6">
-            <div class="flex gap-2">
-                <button class="w-full px-4 py-2 bg-gray-600 text-white rounded-lg mt-4 hover:bg-gray-700 transition-colors">Profile</button>
-                <button onclick="logout()" class="w-full px-4 py-2 bg-red-600 text-white rounded-lg mt-4 hover:bg-red-700 transition-colors">Logout</button>
+        <div class="p-6 border-t border-blue-100">
+            <div class="space-y-3">
+                <button onclick="logout()" class="w-full flex items-center px-4 py-3 text-left rounded-xl transition-all duration-200 hover:bg-red-50 hover:shadow-sm">
+                    <div class="w-10 h-10 bg-red-100 rounded-lg flex items-center justify-center mr-3">
+                        <i class="fa-solid fa-sign-out-alt text-red-600"></i>
+                    </div>
+                    <span class="font-medium text-red-700">Logout</span>
+                </button>
             </div>
-            <p class="mt-3 text-[8px] text-center">&copy; 2025 Engage Lanka, a subsidiary of Softmaster Technologies (Pvt) Ltd. All rights reserved.</p>
+            <p class="mt-4 text-xs text-center text-gray-400">&copy; 2025 Engage Lanka, a subsidiary of Softmaster Technologies (Pvt) Ltd. All rights reserved.</p>
         </div>
     </aside>
 
@@ -56,308 +123,313 @@
     <div id="overlay" class="fixed inset-0 bg-white/60 bg-opacity-50 z-30 hidden md:hidden"></div>
 
     <!-- Main content with responsive margin -->
-    <main id="mainContent" class="flex-1 md:ml-72 sm:mt-20 p-4 md:p-10 transition-all duration-300">
+    <main id="mainContent" class="flex-1 md:ml-72 p-6 transition-all duration-300">
         <!-- Dashboard Section -->
-        <section id="dashboardSection" class="px-5">
-            <h1 class="text-2xl font-bold">Statistic</h1>
-            <div class="bg-white mt-5 flex justify-center py-5 rounded-lg shadow">
-            <div class="grid md:grid-cols-6 sm:grid-cols-4 gap-8 sm:gap-2">
-            <!-- Guide Count Widget -->
-            <div class="flex flex-col items-center justify-center">
-                <div class="relative w-32 h-32 mb-2">
-                    <svg class="w-full h-full" viewBox="0 0 100 100">
-                        <circle
-                            class="text-blue-300"
-                            stroke="currentColor"
-                            stroke-width="8"
-                            fill="transparent"
-                            r="44"
-                            cx="50"
-                            cy="50"
-                        />
-                        <circle
-                            class="text-blue-600"
-                            stroke="currentColor"
-                            stroke-width="8"
-                            fill="transparent"
-                            r="44"
-                            cx="50"
-                            cy="50"
-                            stroke-dasharray="276.46"
-                            stroke-dashoffset="{{ 276.46 - (min($guideCount, $guideMax ?? 100) / ($guideMax ?? 100)) * 276.46 }}"
-                            stroke-linecap="round"
-                            style="transition: stroke-dashoffset 0.6s;"
-                        />
-                    </svg>
-                    <div class="absolute inset-0 flex flex-col items-center justify-center">
-                        <span class="text-3xl font-extrabold text-blue-700">{{ $guideCount }}</span>
-                        <span class="text-xs text-gray-500">Guides</span>
+        <section id="dashboardSection" class="space-y-8">
+            <!-- Header -->
+            <div class="bg-white/80 backdrop-blur-sm rounded-3xl p-8 shadow-lg border border-white/20">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <h1 class="text-3xl font-bold text-gray-800 mb-2">Welcome back, Admin</h1>
+                        <p class="text-gray-600">Here's what's happening with your platform today.</p>
+                    </div>
+                    <div class="text-right">
+                        <p class="text-sm text-gray-500">{{ date('l, F j, Y') }}</p>
+                        <p class="text-2xl font-bold text-blue-600" id="currentTime"></p>
                     </div>
                 </div>
-                <span class="text-gray-600 font-semibold">Total Guides</span>
             </div>
 
-            <div class="flex flex-col items-center justify-center">
-                 <div class="relative w-32 h-32 mb-2">
-                     <svg class="w-full h-full" viewBox="0 0 100 100">
-                         <circle class="text-cyan-300 " stroke="currentColor" stroke-width="8" fill="transparent" r="44" cx="50" cy="50"/>
-                         <circle class="text-cyan-600" stroke="currentColor" stroke-width="8" fill="transparent" r="44" cx="50" cy="50"
-                             stroke-dasharray="276.46"
-                             stroke-dashoffset="{{ 276.46 - ($monthlyNewGuides/$guideMax)*276.46 }}"
-                             stroke-linecap="round"
-                             style="transition: stroke-dashoffset 0.6s;"/>
-                     </svg>
-                     <div class="absolute inset-0 flex flex-col items-center justify-center">
-                         <span class="text-3xl font-extrabold text-blue-700">{{ $monthlyNewGuides }}</span>
-                         <span class="text-xs text-gray-500">This Month</span>
-                     </div>
-                 </div>
-                 <span class="text-gray-600 font-semibold">New Guides</span>
-             </div>
-            
-            <!-- Visit Count Widget -->
-            <div class="flex flex-col items-center justify-center">
-                <div class="relative w-32 h-32 mb-2">
-                    <svg class="w-full h-full" viewBox="0 0 100 100">
-                        <circle class="text-green-300" stroke="currentColor" stroke-width="8" fill="transparent" r="44" cx="50" cy="50"/>
-                        <circle class="text-green-600" stroke="currentColor" stroke-width="8" fill="transparent" r="44" cx="50" cy="50"
-                            stroke-dasharray="276.46"
-                            stroke-dashoffset="{{ 276.46 - ($visitCount/100)*276.46 }}"
-                            stroke-linecap="round"
-                            style="transition: stroke-dashoffset 0.6s;"/>
-                    </svg>
-                    <div class="absolute inset-0 flex flex-col items-center justify-center">
-                        <span class="text-3xl font-extrabold text-green-700">{{ $visitCount }}</span>
-                        <span class="text-xs text-gray-500">Visits</span>
-                    </div>
-                </div>
-                <span class="text-gray-600 font-semibold">Total Visits</span>
-            </div>
-            <!-- Monthly Visit Count Widget -->
-            <div class="flex flex-col items-center justify-center">
-                <div class="relative w-32 h-32 mb-2">
-                    <svg class="w-full h-full" viewBox="0 0 100 100">
-                        <circle class="text-purple-300" stroke="currentColor" stroke-width="8" fill="transparent" r="44" cx="50" cy="50"/>
-                        <circle class="text-purple-600" stroke="currentColor" stroke-width="8" fill="transparent" r="44" cx="50" cy="50"
-                            stroke-dasharray="276.46"
-                            stroke-dashoffset="{{ 276.46 - ($monthlyVisitCount/100)*276.46 }}"
-                            stroke-linecap="round"
-                            style="transition: stroke-dashoffset 0.6s;"/>
-                    </svg>
-                    <div class="absolute inset-0 flex flex-col items-center justify-center">
-                        <span class="text-3xl font-extrabold text-purple-700">{{ $monthlyVisitCount }}</span>
-                        <span class="text-xs text-gray-500">This Month</span>
-                    </div>
-                </div>
-                <span class="text-gray-600 font-semibold">Monthly Visits</span>
-            </div>
-
-            <!-- Total Tourist Count Widget -->
-            <div class="flex flex-col items-center justify-center">
-                <div class="relative w-32 h-32 mb-2">
-                    <svg class="w-full h-full" viewBox="0 0 100 100">
-                        <circle class="text-yellow-300" stroke="currentColor" stroke-width="8" fill="transparent" r="44" cx="50" cy="50"/>
-                        <circle class="text-yellow-600" stroke="currentColor" stroke-width="8" fill="transparent" r="44" cx="50" cy="50"
-                            stroke-dasharray="276.46"
-                            stroke-dashoffset="{{ 276.46 - ($touristCount/1000)*276.46 }}"
-                            stroke-linecap="round"
-                            style="transition: stroke-dashoffset 0.6s;"/>
-                    </svg>
-                    <div class="absolute inset-0 flex flex-col items-center justify-center">
-                        <span class="text-3xl font-extrabold text-yellow-700">{{ $touristCount }}</span>
-                        <span class="text-xs text-gray-500">Tourists</span>
-                    </div>
-                </div>
-                <span class="text-gray-600 font-semibold">Total Tourists</span>
-            </div>
-
-            <!-- Monthly Tourist Count Widget -->
-            <div class="flex flex-col items-center justify-center">
-                <div class="relative w-32 h-32 mb-2">
-                    <svg class="w-full h-full" viewBox="0 0 100 100">
-                        <circle class="text-orange-300" stroke="currentColor" stroke-width="8" fill="transparent" r="44" cx="50" cy="50"/>
-                        <circle class="text-orange-600" stroke="currentColor" stroke-width="8" fill="transparent" r="44" cx="50" cy="50"
-                            stroke-dasharray="276.46"
-                            stroke-dashoffset="{{ 276.46 - ($monthlyTouristCount/100)*276.46 }}"
-                            stroke-linecap="round"
-                            style="transition: stroke-dashoffset 0.6s;"/>
-                    </svg>
-                    <div class="absolute inset-0 flex flex-col items-center justify-center">
-                        <span class="text-3xl font-extrabold text-orange-700">{{ $monthlyTouristCount }}</span>
-                        <span class="text-xs text-gray-500">This Month</span>
-                    </div>
-                </div>
-                <span class="text-gray-600 font-semibold">Monthly Tourists</span>
-            </div>
-        </div>
-        </div>
-
-        <h1 class="text-2xl mt-10 font-bold text-gray-800">Top Guides</h1>
-        <div class="mt-5 bg-white rounded-lg shadow p-6">
-            <div class="space-y-4">
-                @foreach($topGuides as $index => $guide)
-                    <div class="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
-                        <div class="flex items-center space-x-4">
-                            <div class="flex-shrink-0 w-10 h-10 flex items-center justify-center rounded-full {{ $index === 0 ? 'bg-yellow-400' : ($index === 1 ? 'bg-gray-300' : ($index === 2 ? 'bg-yellow-600' : 'bg-gray-200')) }}">
-                                @if($guide->profile_photo)
-                                    <img src="{{ asset('storage/' . $guide->profile_photo) }}" 
-                                         alt="{{ $guide->full_name }}" 
-                                         class="w-full h-full rounded-full object-cover">
-                                @else
-                                    <span class="text-white font-bold">{{ $index + 1 }}</span>
-                                @endif
-                            </div>
-                            <div>
-                                <h3 class="font-semibold text-gray-800">{{ $guide->full_name }}</h3>
-                                <p class="text-sm text-gray-500">Total Tourists: {{ $guide->total_pax }}</p>
-                            </div>
+            <!-- Statistics Grid -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <!-- Total Guides -->
+                <div class="bg-white/80 backdrop-blur-sm rounded-3xl p-6 shadow-lg border border-white/20 hover:shadow-xl transition-all duration-300">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-sm text-gray-600 mb-1">Total Guides</p>
+                            <p class="text-3xl font-bold text-blue-700">{{ $guideCount }}</p>
+                            <p class="text-xs text-green-600 mt-1">
+                                <i class="fas fa-arrow-up mr-1"></i>
+                                +{{ $monthlyNewGuides }} this month
+                            </p>
                         </div>
-                        <div class="flex items-center gap-4">
-                            <div class="text-sm font-medium text-green-600">
-                                {{ number_format(($guide->total_pax / $touristCount) * 100, 1) }}% of total
-                            </div>
-                            <a href="/admin/guide/{{ $guide->id }}/update" 
-                               class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors duration-200">
-                                View Profile <i class="fa-solid fa-arrow-up-right-from-square"></i>
-                            </a>
+                        <div class="w-16 h-16 bg-gradient-to-br from-blue-500 to-blue-600 rounded-2xl flex items-center justify-center shadow-lg">
+                            <i class="fa-solid fa-users text-white text-2xl"></i>
                         </div>
                     </div>
-                @endforeach
-            </div>
-        </div>
-
-        <h2 class="text-2xl font-bold text-gray-800 mt-10">Tourist Visits - Last 12 Months</h2>
-        <div class="mt-5 bg-white rounded-lg shadow-lg p-6">
-            <div class="relative w-full" style="height: 400px;">
-                <canvas id="touristChart"></canvas>
-            </div>
-        </div>
-
-        <h2 class="text-2xl font-bold text-gray-800 mt-10">New Guides - Last 12 Months</h2>
-        <div class="mt-5 bg-white rounded-lg shadow-lg p-6">
-            <div class="relative w-full" style="height: 400px;">
-                <canvas id="guideChart"></canvas>
-            </div>
-        </div>
-
-        <div class="mt-10 bg-white rounded-lg shadow-lg p-6">
-            <h2 class="text-2xl font-bold text-gray-800 mb-4">Generate Monthly Report</h2>
-            <div class="flex flex-col md:flex-row gap-4 items-end">
-                <div class="flex-1">
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Select Month and Year</label>
-                    <input 
-                        type="month" 
-                        id="reportDate" 
-                        class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
-                        value="{{ date('Y-m') }}"
-                    >
                 </div>
-                <div class="flex gap-2">
-                    <button 
-                        onclick="generatePDFReport()"
-                        class="px-6 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors duration-200 flex items-center gap-2"
-                    >
-                        <i class="fas fa-file-pdf"></i>
-                        PDF Report
-                    </button>
-                    <button 
-                        onclick="generateExcelReport()"
-                        class="px-6 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors duration-200 flex items-center gap-2"
-                    >
-                        <i class="fas fa-file-excel"></i>
-                        Excel Report
-                    </button>
+
+                <!-- Total Visits -->
+                <div class="bg-white/80 backdrop-blur-sm rounded-3xl p-6 shadow-lg border border-white/20 hover:shadow-xl transition-all duration-300">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-sm text-gray-600 mb-1">Total Visits</p>
+                            <p class="text-3xl font-bold text-green-700">{{ $visitCount }}</p>
+                            <p class="text-xs text-green-600 mt-1">
+                                <i class="fas fa-arrow-up mr-1"></i>
+                                +{{ $monthlyVisitCount }} this month
+                            </p>
+                        </div>
+                        <div class="w-16 h-16 bg-gradient-to-br from-green-500 to-green-600 rounded-2xl flex items-center justify-center shadow-lg">
+                            <i class="fa-solid fa-map-marker-alt text-white text-2xl"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Total Tourists -->
+                <div class="bg-white/80 backdrop-blur-sm rounded-3xl p-6 shadow-lg border border-white/20 hover:shadow-xl transition-all duration-300">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-sm text-gray-600 mb-1">Total Tourists</p>
+                            <p class="text-3xl font-bold text-purple-700">{{ $touristCount }}</p>
+                            <p class="text-xs text-green-600 mt-1">
+                                <i class="fas fa-arrow-up mr-1"></i>
+                                +{{ $monthlyTouristCount }} this month
+                            </p>
+                        </div>
+                        <div class="w-16 h-16 bg-gradient-to-br from-purple-500 to-purple-600 rounded-2xl flex items-center justify-center shadow-lg">
+                            <i class="fa-solid fa-globe text-white text-2xl"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Revenue/Performance -->
+                <div class="bg-white/80 backdrop-blur-sm rounded-3xl p-6 shadow-lg border border-white/20 hover:shadow-xl transition-all duration-300">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-sm text-gray-600 mb-1">Performance</p>
+                            <p class="text-3xl font-bold text-orange-700">{{ $performance }}</p>
+                            <p class="text-xs text-green-600 mt-1">
+                                <i class="fas fa-arrow-up mr-1"></i>
+                                {{ $monthlyPerformance }}% this month
+                            </p>
+                        </div>
+                        <div class="w-16 h-16 bg-gradient-to-br from-orange-500 to-orange-600 rounded-2xl flex items-center justify-center shadow-lg">
+                            <i class="fa-solid fa-chart-line text-white text-2xl"></i>
+                        </div>
+                    </div>
                 </div>
             </div>
-        </div>
+
+            <!-- Top Guides Section -->
+            <div class="bg-white/80 backdrop-blur-sm rounded-3xl p-8 shadow-lg border border-white/20">
+                <div class="flex items-center justify-between mb-6">
+                    <h2 class="text-2xl font-bold text-gray-800">Top Performing Guides</h2>
+                    <span class="text-sm text-gray-500 bg-gray-100 px-3 py-1 rounded-full">Last 30 days</span>
+                </div>
+                <div class="space-y-4">
+                    @foreach($topGuides as $index => $guide)
+                        <div class="flex items-center justify-between p-4 bg-gradient-to-r from-gray-50 to-white rounded-2xl border border-gray-100 hover:shadow-md transition-all duration-200">
+                            <div class="flex items-center space-x-4">
+                                <div class="relative">
+                                    @if($guide->profile_photo)
+                                        <img src="{{ asset('storage/' . $guide->profile_photo) }}" 
+                                             alt="{{ $guide->full_name }}" 
+                                             class="w-12 h-12 rounded-xl object-cover border-2 border-white shadow-lg">
+                                    @else
+                                        <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-gray-200 to-gray-300 flex items-center justify-center shadow-lg">
+                                            <i class="fas fa-user text-gray-500"></i>
+                                        </div>
+                                    @endif
+                                    <div class="absolute -top-2 -right-2 w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold text-white
+                                        {{ $index === 0 ? 'bg-gradient-to-br from-yellow-400 to-yellow-500' : 
+                                           ($index === 1 ? 'bg-gradient-to-br from-gray-400 to-gray-500' : 
+                                           ($index === 2 ? 'bg-gradient-to-br from-orange-400 to-orange-500' : 'bg-gradient-to-br from-blue-400 to-blue-500')) }}">
+                                        {{ $index + 1 }}
+                                    </div>
+                                </div>
+                                <div>
+                                    <h3 class="font-bold text-gray-800">{{ $guide->full_name }}</h3>
+                                    <p class="text-sm text-gray-600">{{ $guide->total_pax }} tourists served</p>
+                                </div>
+                            </div>
+                            <div class="flex items-center gap-4">
+                                <div class="text-right">
+                                    <div class="text-sm font-bold text-green-600">
+                                        {{ $touristCount > 0 ? number_format(($guide->total_pax / $touristCount) * 100, 1) : 0 }}%
+                                    </div>
+                                    <div class="text-xs text-gray-500">of total</div>
+                                </div>
+                                <a href="/admin/guide/{{ $guide->id }}/update" 
+                                   class="px-4 py-2 bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-xl hover:shadow-lg transition-all duration-200 text-sm font-medium">
+                                    View <i class="fa-solid fa-arrow-right ml-1"></i>
+                                </a>
+                            </div>
+                        </div>
+                    @endforeach
+                </div>
+            </div>
+
+            <!-- Charts Section -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <!-- Tourist Visits Chart -->
+                <div class="bg-white/80 backdrop-blur-sm rounded-3xl p-8 shadow-lg border border-white/20">
+                    <h3 class="text-xl font-bold text-gray-800 mb-6">Tourist Visits Trend</h3>
+                    <div class="relative h-80">
+                        <canvas id="touristChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- New Guides Chart -->
+                <div class="bg-white/80 backdrop-blur-sm rounded-3xl p-8 shadow-lg border border-white/20">
+                    <h3 class="text-xl font-bold text-gray-800 mb-6">New Guides Registration</h3>
+                    <div class="relative h-80">
+                        <canvas id="guideChart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Reports Section -->
+            <div class="bg-white/80 backdrop-blur-sm rounded-3xl p-8 shadow-lg border border-white/20">
+                <h3 class="text-2xl font-bold text-gray-800 mb-6">Generate Reports</h3>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 items-end">
+                    <div class="md:col-span-1">
+                        <label class="block text-sm font-medium text-gray-700 mb-3">Select Period</label>
+                        <input 
+                            type="month" 
+                            id="reportDate" 
+                            class="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200"
+                            value="{{ date('Y-m') }}"
+                        >
+                    </div>
+                    <div class="md:col-span-2">
+                        <div class="flex flex-col sm:flex-row gap-3">
+                            <button 
+                                onclick="generatePDFReport()"
+                                class="flex-1 px-6 py-3 bg-gradient-to-r from-red-600 to-red-700 text-white rounded-xl hover:shadow-lg transition-all duration-200 flex items-center justify-center gap-2 font-medium"
+                            >
+                                <i class="fas fa-file-pdf"></i>
+                                Generate PDF Report
+                            </button>
+                            <button 
+                                onclick="generateExcelReport()"
+                                class="flex-1 px-6 py-3 bg-gradient-to-r from-green-600 to-green-700 text-white rounded-xl hover:shadow-lg transition-all duration-200 flex items-center justify-center gap-2 font-medium"
+                            >
+                                <i class="fas fa-file-excel"></i>
+                                Generate Excel Report
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </section>
 
         <!-- Guides Section -->
-        <section id="guidesSection" class="hidden">
-            <div class="flex flex-col md:flex-row md:items-center md:justify-between mb-8">
-                <div class="flex items-center gap-4">
-                    <button onclick="openAddGuideModal()" class="px-4 py-3 bg-black text-white rounded-lg">
-                        <i class="fa-solid fa-circle-plus"></i> Add Guide
-                    </button>
-                </div>
-                <div class="mt-4 md:mt-0">
-                <form id="searchForm" class="flex items-center gap-2">
-                    <div class="relative flex-1">
-                        <input
-                            type="text"
-                            id="searchInput"
-                            class="w-72 px-5 py-2 pl-12 border-2 border-blue-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 transition text-lg"
-                            placeholder="Search by name or ID..."
-                            autocomplete="off">
-                        <svg class="w-6 h-6 absolute left-3 top-1/2 transform -translate-y-1/2 text-blue-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                            <circle cx="11" cy="11" r="8" />
-                            <path d="M21 21l-4.35-4.35" />
-                        </svg>
+        <section id="guidesSection" class="hidden space-y-8">
+            <!-- Header with Actions -->
+            <div class="bg-white/80 backdrop-blur-sm rounded-3xl p-8 shadow-lg border border-white/20">
+                <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
+                    <div>
+                        <h1 class="text-3xl font-bold text-gray-800 mb-2">Manage Guides</h1>
+                        <p class="text-gray-600">Add, edit, and monitor your tour guides</p>
                     </div>
-                    <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white font-bold px-6 py-3 rounded-lg transition">
-                        Search
-                    </button>
-                </form>
+                    <div class="flex flex-col sm:flex-row gap-4">
+                        <button onclick="openAddGuideModal()" class="px-6 py-3 bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-xl hover:shadow-lg transition-all duration-200 flex items-center justify-center gap-2 font-medium">
+                            <i class="fa-solid fa-plus"></i>
+                            Add New Guide
+                        </button>
+                        
+                        <!-- Search -->
+                        <form id="searchForm" class="flex items-center gap-2">
+                            <div class="relative">
+                                <input
+                                    type="text"
+                                    id="searchInput"
+                                    class="w-64 px-4 py-3 pl-12 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200"
+                                    placeholder="Search guides..."
+                                    autocomplete="off">
+                                <i class="fa-solid fa-search absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+                            </div>
+                            <button type="submit" class="px-6 py-3 bg-gradient-to-r from-gray-600 to-gray-700 text-white rounded-xl hover:shadow-lg transition-all duration-200 font-medium">
+                                Search
+                            </button>
+                        </form>
+                    </div>
+                </div>
             </div>
-            </div>
+
+            <!-- Search Results -->
             <div id="searchStatus"></div>
-            <div id="searchResults" class=""></div>
-            <!-- Guide Table Dashboard Widget -->
-        <div class="overflow-x-auto rounded-2xl shadow-lg bg-white/90 mt-10">
-            <table class="min-w-full divide-y divide-blue-100">
-                <thead class="bg-blue-50">
-                    <tr>
-                        <th class="px-6 py-4 text-left text-xl font-bold text-blue-700 uppercase tracking-wider">Profile</th>
-                        <th class="px-6 py-4 text-left text-xl font-bold text-blue-700 uppercase tracking-wider">Name</th>
-                        <th class="px-6 py-4 text-left text-xl font-bold text-blue-700 uppercase tracking-wider">ID</th>
-                        <th class="px-6 py-4 text-center text-xl font-bold text-blue-700 uppercase tracking-wider">Visits</th>
-                        <th class="px-6 py-4 text-center text-xl font-bold text-blue-700 uppercase tracking-wider">Points</th>
-                        <th class="px-6 py-4 text-center text-xl font-bold text-blue-700 uppercase tracking-wider">Add visit(today)</th>
-                        <th class="px-6 py-4 text-center text-xl font-bold text-blue-700 uppercase tracking-wider">Actions</th>
-                    </tr>
-                </thead>
-                <tbody class="bg-white divide-y divide-blue-50">
-                    @foreach($guides as $guide)
-                        <tr>
-                            <td class="px-6 py-4">
-                                @if($guide->profile_photo)
-                                    <img src="{{ asset('storage/' . $guide->profile_photo) }}" alt="Profile" class="w-12 h-12 rounded-full object-cover border-2 border-blue-200 shadow">
-                                @else
-                                    <div class="w-12 h-12 rounded-full bg-gray-200 flex items-center justify-center text-gray-400 text-xl">?</div>
-                                @endif
-                            </td>
-                            <td class="px-6 py-4 font-semibold text-blue-900">{{ $guide->full_name }}</td>
-                            <td id="guide-row-{{ $guide->id }}" class="px-6 py-4 font-mono text-gray-700">{{ $guide->id }}</td>
-                            <td class="px-6 py-4 text-center text-blue-700 font-bold">
-                                {{ $guide->visits_count ?? 0 }}
-                            </td>
-                            <td class="px-6 py-4 text-center text-yellow-500 font-bold">
-                                {{ $guide->redemptions->sum('points') ?? 0 }}
-                            </td>
-                            <td <td class="px-6 py-4 flex gap-2 justify-center items-center">>
-                                <input type="number" min="1" value="1"
-                                    class="w-20 px-2 py-1 border border-blue-200 rounded focus:ring-2 focus:ring-blue-400"
-                                    id="visit_count_{{ $guide->id }}"
-                                    placeholder="Count">
-                                    <button
-                                    class="bg-green-500 hover:bg-green-600 text-white px-3 py-2 rounded-lg font-semibold shadow transition"
-                                    onclick="addVisit({{ $guide->id }})"
-                                    type="button"
-                                >
-                                    <i class="fa-solid fa-circle-plus"></i> Add
-                                </button>
-                            </td>
-                            <td class="px-6 py-4 flex gap-2 justify-center items-center">
-                                <a href="{{ url('/admin/guide/' . $guide->id . '/update') }}"
-                                   class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-2 rounded-lg font-semibold shadow transition ml-2">
-                                    View Profile
-                                </a>
-                            </td>
-                        </tr>
-                    @endforeach
-                </tbody>
-            </table>
-        </div>
+            <div id="searchResults"></div>
+
+            <!-- Guides Table -->
+            <div class="bg-white/80 backdrop-blur-sm rounded-3xl shadow-lg border border-white/20 overflow-hidden">
+                <div class="overflow-x-auto">
+                    <table class="min-w-full divide-y divide-gray-200">
+                        <thead class="bg-gradient-to-r from-gray-50 to-blue-50">
+                            <tr>
+                                <th class="px-6 py-4 text-left text-sm font-bold text-gray-700 uppercase tracking-wider">Guide</th>
+                                <th class="px-6 py-4 text-left text-sm font-bold text-gray-700 uppercase tracking-wider">Contact</th>
+                                <th class="px-6 py-4 text-center text-sm font-bold text-gray-700 uppercase tracking-wider">Performance</th>
+                                <th class="px-6 py-4 text-center text-sm font-bold text-gray-700 uppercase tracking-wider">Quick Actions</th>
+                                <th class="px-6 py-4 text-center text-sm font-bold text-gray-700 uppercase tracking-wider">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody class="bg-white divide-y divide-gray-100">
+                            @foreach($guides as $guide)
+                                <tr id="guide-row-{{ $guide->id }}" class="hover:bg-blue-50/50 transition-colors duration-200">
+                                    <!-- Guide Info -->
+                                    <td class="px-6 py-4">
+                                        <div class="flex items-center space-x-4">
+                                            @if($guide->profile_photo)
+                                                <img src="{{ asset('storage/' . $guide->profile_photo) }}" alt="Profile" class="w-12 h-12 rounded-xl object-cover border-2 border-white shadow-lg">
+                                            @else
+                                                <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-gray-200 to-gray-300 flex items-center justify-center shadow-lg">
+                                                    <i class="fas fa-user text-gray-500"></i>
+                                                </div>
+                                            @endif
+                                            <div>
+                                                <div class="font-bold text-gray-800">{{ $guide->full_name }}</div>
+                                                <div class="text-sm text-gray-500">ID: {{ $guide->id }}</div>
+                                            </div>
+                                        </div>
+                                    </td>
+
+                                    <!-- Contact Info -->
+                                    <td class="px-6 py-4">
+                                        <div class="text-sm">
+                                            <div class="text-gray-800">{{ $guide->email ?? 'No email' }}</div>
+                                            <div class="text-gray-500">{{ $guide->mobile_number ?? 'No phone' }}</div>
+                                        </div>
+                                    </td>
+
+                                    <!-- Performance Stats -->
+                                    <td class="px-6 py-4 text-center">
+                                        <div class="flex justify-center space-x-4">
+                                            <div class="text-center">
+                                                <div class="text-lg font-bold text-blue-600">{{ $guide->visits_count ?? 0 }}</div>
+                                                <div class="text-xs text-gray-500">Visits</div>
+                                            </div>
+                                            <div class="text-center">
+                                                <div class="text-lg font-bold text-yellow-600">{{ $guide->redemptions->sum('points') ?? 0 }}</div>
+                                                <div class="text-xs text-gray-500">Points</div>
+                                            </div>
+                                        </div>
+                                    </td>
+
+                                    <!-- Quick Actions -->
+                                    <td class="px-6 py-4 text-center">
+                                        <button onclick="openAddVisitModal({{ $guide->id }})" 
+                                                class="px-4 py-2 bg-gradient-to-r from-green-600 to-green-700 text-white rounded-xl text-sm hover:shadow-lg transition-all duration-200 flex items-center space-x-2 mx-auto">
+                                            <i class="fa-solid fa-plus"></i>
+                                            <span>Add Visit</span>
+                                        </button>
+                                    </td>
+
+                                    <!-- Actions -->
+                                    <td class="px-6 py-4 text-center">
+                                        <a href="{{ url('/admin/guide/' . $guide->id . '/update') }}"
+                                           class="px-4 py-2 bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-xl text-sm hover:shadow-lg transition-all duration-200 inline-flex items-center space-x-2">
+                                            <i class="fa-solid fa-eye"></i>
+                                            <span>View</span>
+                                        </a>
+                                    </td>
+                                </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                </div>
+            </div>
 
         <!-- Add Guide Modal -->
         <div id="addGuideModal" class="fixed inset-0 bg-white/90 hidden flex items-center justify-center z-50">
@@ -595,8 +667,9 @@
     <script>
         function logout() {
                     localStorage.removeItem('admin_token');
-                    window.location.href = '/admin/login'; // or your login route
+                    window.location.href = '/admin/login'; 
                 }
+
         function goToProfile() {
          window.location.href = '/admin/profile;'
         }
@@ -616,15 +689,109 @@
 
         async function refreshDashboard() {
             try {
-                const res = await fetch('/api/admin/dashboard-stats', {
-                    headers: { 'Authorization': 'Bearer ' + token, 'Accept': 'application/json' }
+                // Get updated stats
+                const response = await fetch('/api/admin/dashboard-stats', {
+                    headers: {
+                        'Authorization': 'Bearer ' + token,
+                        'Accept': 'application/json'
+                    }
                 });
-                const data = await res.json();
-                document.getElementById('guideCount').textContent = data.guideCount;
-                document.getElementById('visitCount').textContent = data.visitCount;
-                document.getElementById('monthlyVisitCount').textContent = data.monthlyVisitCount;
-            } catch (e) {
-                console.error('Error loading stats', e);
+                const data = await response.json();
+                
+                // Update stat widgets with more specific selectors
+                const statCards = document.querySelectorAll('.bg-white\\/80.backdrop-blur-sm.rounded-3xl.p-6');
+                
+                // Update each stat card individually
+                if (statCards[0]) {
+                    statCards[0].querySelector('.text-3xl.font-bold').textContent = data.guideCount;
+                    statCards[0].querySelector('.text-xs.text-green-600').innerHTML = `<i class="fas fa-arrow-up mr-1"></i>+${data.monthlyNewGuides || 0} this month`;
+                }
+                
+                if (statCards[1]) {
+                    statCards[1].querySelector('.text-3xl.font-bold').textContent = data.visitCount;
+                    statCards[1].querySelector('.text-xs.text-green-600').innerHTML = `<i class="fas fa-arrow-up mr-1"></i>+${data.monthlyVisitCount || 0} this month`;
+                }
+                
+                if (statCards[2]) {
+                    statCards[2].querySelector('.text-3xl.font-bold').textContent = data.touristCount;
+                    statCards[2].querySelector('.text-xs.text-green-600').innerHTML = `<i class="fas fa-arrow-up mr-1"></i>+${data.monthlyTouristCount || 0} this month`;
+                }
+
+                // Refresh guide table
+                const guidesResponse = await fetch('/api/admin/guides', {
+                    headers: {
+                        'Authorization': 'Bearer ' + token,
+                        'Accept': 'application/json'
+                    }
+                });
+                const guidesData = await guidesResponse.json();
+                
+                // Update table body
+                const tableBody = document.querySelector('#guidesSection tbody');
+                if (tableBody && guidesData.guides) {
+                    tableBody.innerHTML = guidesData.guides.map(guide => `
+                        <tr id="guide-row-${guide.id}" class="hover:bg-blue-50/50 transition-colors duration-200">
+                            <!-- Guide Info -->
+                            <td class="px-6 py-4">
+                                <div class="flex items-center space-x-4">
+                                    ${guide.profile_photo
+                                        ? `<img src="/storage/${guide.profile_photo}" alt="Profile" class="w-12 h-12 rounded-xl object-cover border-2 border-white shadow-lg">`
+                                        : `<div class="w-12 h-12 rounded-xl bg-gradient-to-br from-gray-200 to-gray-300 flex items-center justify-center shadow-lg">
+                                            <i class="fas fa-user text-gray-500"></i>
+                                           </div>`
+                                    }
+                                    <div>
+                                        <div class="font-bold text-gray-800">${guide.full_name}</div>
+                                        <div class="text-sm text-gray-500">ID: ${guide.id}</div>
+                                    </div>
+                                </div>
+                            </td>
+                            
+                            <!-- Contact Info -->
+                            <td class="px-6 py-4">
+                                <div class="text-sm">
+                                    <div class="text-gray-800">${guide.email || 'No email'}</div>
+                                    <div class="text-gray-500">${guide.mobile_number || 'No phone'}</div>
+                                </div>
+                            </td>
+                            
+                            <!-- Performance Stats -->
+                            <td class="px-6 py-4 text-center">
+                                <div class="flex justify-center space-x-4">
+                                    <div class="text-center">
+                                        <div class="text-lg font-bold text-blue-600">${guide.visits_count || 0}</div>
+                                        <div class="text-xs text-gray-500">Visits</div>
+                                    </div>
+                                    <div class="text-center">
+                                        <div class="text-lg font-bold text-yellow-600">${guide.total_points || 0}</div>
+                                        <div class="text-xs text-gray-500">Points</div>
+                                    </div>
+                                </div>
+                            </td>
+                            
+                            <!-- Quick Actions -->
+                            <td class="px-6 py-4 text-center">
+                                <button onclick="openAddVisitModal(${guide.id})" 
+                                        class="px-4 py-2 bg-gradient-to-r from-green-600 to-green-700 text-white rounded-xl text-sm hover:shadow-lg transition-all duration-200 flex items-center space-x-2 mx-auto">
+                                    <i class="fa-solid fa-plus"></i>
+                                    <span>Add Visit</span>
+                                </button>
+                            </td>
+                            
+                            <!-- Actions -->
+                            <td class="px-6 py-4 text-center">
+                                <a href="/admin/guide/${guide.id}/update"
+                                   class="px-4 py-2 bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-xl text-sm hover:shadow-lg transition-all duration-200 inline-flex items-center space-x-2">
+                                    <i class="fa-solid fa-eye"></i>
+                                    <span>View</span>
+                                </a>
+                            </td>
+                        </tr>
+                    `).join('');
+                }
+                
+            } catch (error) {
+                console.error('Error refreshing dashboard:', error);
             }
         }
 
@@ -789,72 +956,116 @@
 
          // Function to refresh dashboard data
         async function refreshDashboard() {
-        try {
-            // Get updated stats
-            const response = await fetch('/api/admin/dashboard-stats', {
-                headers: {
-                    'Authorization': 'Bearer ' + token,
-                    'Accept': 'application/json'
+            try {
+                // Get updated stats
+                const response = await fetch('/api/admin/dashboard-stats', {
+                    headers: {
+                        'Authorization': 'Bearer ' + token,
+                        'Accept': 'application/json'
+                    }
+                });
+                const data = await response.json();
+                
+                // Update stat widgets with more specific selectors
+                const statCards = document.querySelectorAll('.bg-white\\/80.backdrop-blur-sm.rounded-3xl.p-6');
+                
+                // Update each stat card individually
+                if (statCards[0]) {
+                    statCards[0].querySelector('.text-3xl.font-bold').textContent = data.guideCount;
+                    statCards[0].querySelector('.text-xs.text-green-600').innerHTML = `<i class="fas fa-arrow-up mr-1"></i>+${data.monthlyNewGuides || 0} this month`;
                 }
-            });
-            const data = await response.json();
-            
-            // Update stat widgets
-            document.querySelector('.text-blue-700').textContent = data.guideCount;
-            document.querySelector('.text-green-700').textContent = data.visitCount;
-            document.querySelector('.text-purple-700').textContent = data.monthlyVisitCount;
+                
+                if (statCards[1]) {
+                    statCards[1].querySelector('.text-3xl.font-bold').textContent = data.visitCount;
+                    statCards[1].querySelector('.text-xs.text-green-600').innerHTML = `<i class="fas fa-arrow-up mr-1"></i>+${data.monthlyVisitCount || 0} this month`;
+                }
+                
+                if (statCards[2]) {
+                    statCards[2].querySelector('.text-3xl.font-bold').textContent = data.touristCount;
+                    statCards[2].querySelector('.text-xs.text-green-600').innerHTML = `<i class="fas fa-arrow-up mr-1"></i>+${data.monthlyTouristCount || 0} this month`;
+                }
+                
+                if (statCards[3]) {
+                    statCards[3].querySelector('.text-3xl.font-bold').textContent = data.performance || '95%';
+                }
 
-            // Refresh guide table
-            const guidesResponse = await fetch('/api/admin/guides', {
-                headers: {
-                    'Authorization': 'Bearer ' + token,
-                    'Accept': 'application/json'
-                }
-            });
-            const guidesData = await guidesResponse.json();
-            
-            // Update table body
-            const tableBody = document.querySelector('tbody');
-            if (tableBody && guidesData.guides) {
-                tableBody.innerHTML = guidesData.guides.map(guide => `
-                    <tr>
-                        <td class="px-6 py-4">
-                            ${guide.profile_photo 
-                                ? `<img src="/storage/${guide.profile_photo}" alt="Profile" class="w-12 h-12 rounded-full object-cover border-2 border-blue-200 shadow">`
-                                : `<div class="w-12 h-12 rounded-full bg-gray-200 flex items-center justify-center text-gray-400 text-xl">?</div>`
-                            }
-                        </td>
-                        <td class="px-6 py-4 font-semibold text-blue-900">${guide.full_name}</td>
-                        <td id="guide-row-${guide.id}" class="px-6 py-4 font-mono text-gray-700">${guide.id}</td>
-                        <td class="px-6 py-4 text-center text-blue-700 font-bold">${guide.visits_count || 0}</td>
-                        <td class="px-6 py-4 text-center text-yellow-500 font-bold">${guide.redemptions_sum_points || 0}</td>
-                        <td class="px-6 py-4 flex gap-2 justify-center items-center">
-                            <input type="number" min="1"
-                                class="w-30 px-2 py-1.5 border border-blue-200 rounded-lg focus:ring-2 focus:ring-blue-400"
-                                id="visit_count_${guide.id}"
-                                placeholder="pax count">
-                            <button
-                                class="bg-green-500 hover:bg-green-600 text-white px-3 py-2 rounded-lg font-semibold shadow transition"
-                                onclick="addVisit(${guide.id})"
-                                type="button">
-                                <i class="fa-solid fa-circle-plus"></i> Add
-                            </button>
+                // Refresh guide table
+                const guidesResponse = await fetch('/api/admin/guides', {
+                    headers: {
+                        'Authorization': 'Bearer ' + token,
+                        'Accept': 'application/json'
+                    }
+                });
+                const guidesData = await guidesResponse.json();
+                
+                // Update table body
+                const tableBody = document.querySelector('#guidesSection tbody');
+                if (tableBody && guidesData.guides) {
+                    tableBody.innerHTML = guidesData.guides.map(guide => `
+                        <tr class="hover:bg-blue-50/50 transition-colors duration-200">
+                            <!-- Guide Info -->
+                            <td class="px-6 py-4">
+                                <div class="flex items-center space-x-4">
+                                    ${guide.profile_photo
+                                        ? `<img src="/storage/${guide.profile_photo}" alt="Profile" class="w-12 h-12 rounded-xl object-cover border-2 border-white shadow-lg">`
+                                        : `<div class="w-12 h-12 rounded-xl bg-gradient-to-br from-gray-200 to-gray-300 flex items-center justify-center shadow-lg">
+                                            <i class="fas fa-user text-gray-500"></i>
+                                           </div>`
+                                    }
+                                    <div>
+                                        <div class="font-bold text-gray-800">${guide.full_name}</div>
+                                        <div class="text-sm text-gray-500">ID: ${guide.id}</div>
+                                    </div>
+                                </div>
+                            </td>
                             
-                        </td>
-                        <td class="">
-                            <a href="/admin/guide/${guide.id}/update"
-                               class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-2.5 rounded-lg font-semibold shadow transition ml-2">
-                                View Profile <i class="fa-solid fa-arrow-up-right-from-square"></i>
-                            </a>
-                        </td>
-                    </tr>
-                `).join('');
+                            <!-- Contact Info -->
+                            <td class="px-6 py-4">
+                                <div class="text-sm">
+                                    <div class="text-gray-800">${guide.email || 'No email'}</div>
+                                    <div class="text-gray-500">${guide.mobile_number || 'No phone'}</div>
+                                </div>
+                            </td>
+                            
+                            <!-- Performance Stats -->
+                            <td class="px-6 py-4 text-center">
+                                <div class="flex justify-center space-x-4">
+                                    <div class="text-center">
+                                        <div class="text-lg font-bold text-blue-600">${guide.visits_count || 0}</div>
+                                        <div class="text-xs text-gray-500">Visits</div>
+                                    </div>
+                                    <div class="text-center">
+                                        <div class="text-lg font-bold text-yellow-600">${$guide.redemptions.sum('points') || 0}</div>
+                                        <div class="text-xs text-gray-500">Points</div>
+                                    </div>
+                                </div>
+                            </td>
+                            
+                            <!-- Quick Actions -->
+                            <td class="px-6 py-4 text-center">
+                                <button onclick="openAddVisitModal(${guide.id})" 
+                                        class="px-4 py-2 bg-gradient-to-r from-green-600 to-green-700 text-white rounded-xl text-sm hover:shadow-lg transition-all duration-200 flex items-center space-x-2 mx-auto">
+                                    <i class="fa-solid fa-plus"></i>
+                                    <span>Add Visit</span>
+                                </button>
+                            </td>
+                            
+                            <!-- Actions -->
+                            <td class="px-6 py-4 text-center">
+                                <a href="/admin/guide/${guide.id}/update"
+                                   class="px-4 py-2 bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-xl text-sm hover:shadow-lg transition-all duration-200 inline-flex items-center space-x-2">
+                                    <i class="fa-solid fa-eye"></i>
+                                    <span>View</span>
+                                </a>
+                            </td>
+                        </tr>
+                    `).join('');
+                }
+                
+            } catch (error) {
+                console.error('Error refreshing dashboard:', error);
             }
-            
-        } catch (error) {
-            console.error('Error refreshing dashboard:', error);
         }
-    }
 
         // Refresh every 30 seconds
         setInterval(refreshDashboard, 5000);
@@ -954,6 +1165,176 @@ document.addEventListener('DOMContentLoaded', function() {
         setInitialState();
     });
 });
+    </script>
+
+    <script>
+    // Add time display
+    function updateTime() {
+        const now = new Date();
+        const timeString = now.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+        const timeElement = document.getElementById('currentTime');
+        if (timeElement) {
+            timeElement.textContent = timeString;
+        }
+    }
+    
+    // Update time every second
+    setInterval(updateTime, 1000);
+    updateTime(); // Initial call
+    
+    // Add navigation active state management
+    function showSection(sectionName) {
+        // Hide all sections
+        document.querySelectorAll('section[id$="Section"]').forEach(section => {
+            section.classList.add('hidden');
+        });
+        
+        // Show selected section
+        const targetSection = document.getElementById(sectionName + 'Section');
+        if (targetSection) {
+            targetSection.classList.remove('hidden');
+        }
+        
+        // Update navigation active states
+        document.querySelectorAll('.nav-item').forEach(item => {
+            item.classList.remove('active', 'bg-blue-50', 'shadow-md');
+        });
+        
+        // Add active state to clicked item
+        event.target.closest('.nav-item').classList.add('active', 'bg-blue-50', 'shadow-md');
+        
+        // Close sidebar on mobile
+        if (window.innerWidth < 768) {
+            document.getElementById('sidebar').classList.add('-translate-x-full');
+            document.getElementById('overlay').classList.add('hidden');
+        }
+    }
+    
+    // Modal functions
+    function openAddVisitModal(guideId) {
+        // Create modal if it doesn't exist
+        if (!document.getElementById('addVisitModal')) {
+            createAddVisitModal();
+        }
+        
+        document.getElementById('visitGuideId').value = guideId;
+        document.getElementById('visitDate').value = new Date().toISOString().split('T')[0];
+        document.getElementById('paxCount').value = '';
+        document.getElementById('visitNotes').value = '';
+        document.getElementById('addVisitModal').classList.remove('hidden');
+        document.getElementById('addVisitModal').classList.add('flex');
+        document.body.style.overflow = 'hidden';
+    }
+    
+    function closeAddVisitModal() {
+        document.getElementById('addVisitModal').classList.add('hidden');
+        document.getElementById('addVisitModal').classList.remove('flex');
+        document.body.style.overflow = 'auto';
+    }
+    
+    function createAddVisitModal() {
+        const modalHTML = `
+            <div id="addVisitModal" class="fixed inset-0 bg-black/50 backdrop-blur-sm hidden items-center justify-center z-[9999]">
+                <div class="bg-white rounded-3xl shadow-2xl p-8 max-w-md w-full mx-4 relative" onclick="event.stopPropagation()">
+                    <div class="flex justify-between items-center mb-6">
+                        <h2 class="text-2xl font-bold text-blue-700">Add Visit</h2>
+                        <button onclick="closeAddVisitModal()" class="text-gray-500 hover:text-gray-700 text-2xl transition-colors duration-200 p-2 rounded-full hover:bg-gray-100">
+                            <i class="fa-solid fa-times"></i>
+                        </button>
+                    </div>
+                    
+                    <form id="addVisitForm">
+                        <input type="hidden" id="visitGuideId" name="guide_id" value="">
+                        
+                        <div class="mb-6">
+                            <label for="paxCount" class="block text-sm font-medium text-gray-700 mb-2">Number of Tourists (Pax)</label>
+                            <input type="number" id="paxCount" name="pax_count" 
+                                   class="w-full p-4 border border-gray-300 rounded-2xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors duration-200" 
+                                   placeholder="Enter number of tourists" min="1" required>
+                        </div>
+                        
+                        <div class="mb-6">
+                            <label for="visitDate" class="block text-sm font-medium text-gray-700 mb-2">Visit Date</label>
+                            <input type="date" id="visitDate" name="visit_date" 
+                                   class="w-full p-4 border border-gray-300 rounded-2xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors duration-200" 
+                                   required>
+                        </div>
+                        
+                        <div class="mb-6">
+                            <label for="visitNotes" class="block text-sm font-medium text-gray-700 mb-2">Notes (Optional)</label>
+                            <textarea id="visitNotes" name="notes" rows="3"
+                                      class="w-full p-4 border border-gray-300 rounded-2xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors duration-200" 
+                                      placeholder="Add any additional notes..."></textarea>
+                        </div>
+                        
+                        <div class="flex space-x-3">
+                            <button type="button" onclick="closeAddVisitModal()" 
+                                    class="flex-1 px-6 py-3 bg-gray-100 text-gray-700 rounded-2xl font-medium hover:bg-gray-200 transition-colors duration-200">
+                                Cancel
+                            </button>
+                            <button type="submit" 
+                                    class="flex-1 px-6 py-3 bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-2xl font-medium hover:shadow-lg transition-all duration-200">
+                                Add Visit
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        `;
+        document.body.insertAdjacentHTML('beforeend', modalHTML);
+        
+        // Add form submission handler
+        document.getElementById('addVisitForm').addEventListener('submit', handleAddVisitSubmit);
+    }
+    
+    async function handleAddVisitSubmit(e) {
+        e.preventDefault();
+        
+        const formData = new FormData(e.target);
+        const token = localStorage.getItem('admin_token');
+        
+        try {
+            const response = await fetch('/api/admin/visits', {
+                method: 'POST',
+                headers: {
+                    'Authorization': 'Bearer ' + token,
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    guide_id: parseInt(formData.get('guide_id')),
+                    pax_count: parseInt(formData.get('pax_count')),
+                    visit_date: formData.get('visit_date'),
+                    notes: formData.get('notes')
+                })
+            });
+            
+            const data = await response.json();
+            
+            if (data.success || data.status === 'success') {
+                alert('Visit added successfully!');
+                closeAddVisitModal();
+                location.reload(); // Simple refresh for now
+            } else {
+                alert(data.message || 'Failed to add visit');
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            alert('Network error. Please try again.');
+        }
+    }
+    
+    // Modal close on outside click
+    document.addEventListener('click', function(event) {
+        const modals = ['addGuideModal', 'addVisitModal'];
+        modals.forEach(modalId => {
+            const modal = document.getElementById(modalId);
+            if (modal && event.target === modal) {
+                if (modalId === 'addGuideModal') closeAddGuideModal();
+                if (modalId === 'addVisitModal') closeAddVisitModal();
+            }
+        });
+    });
     </script>
 </body>
 

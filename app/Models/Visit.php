@@ -16,6 +16,7 @@ class Visit extends Model
         'guide_id',
         'visit_date',
         'pax_count',
+        'notes'
     ];
 
     // Relationships

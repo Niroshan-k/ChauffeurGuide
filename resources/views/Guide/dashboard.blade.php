@@ -74,7 +74,7 @@
         
         <div class="p-6 flex flex-col items-center">
             <!-- Logo -->
-            <div class="mb-8 p-4 rounded-xl bg-gradient-to-br from-blue-50 to-blue-100">
+            <div class="mb-8 p-4">
                 <img src="/storage/appImages/logo.png" alt="Logo" class="w-20 h-auto">
             </div>
             
@@ -117,7 +117,7 @@
                     <span>Logout</span>
                 </button>
             </div>
-            <p class="mt-4 text-xs text-center text-gray-500">&copy; 2025 Engage Lanka</p>
+            <p class="mt-4 text-xs text-center text-gray-500">&copy; 2025 Engage Lanka, a subsidiary of Softmaster Technologies (Pvt) Ltd. All rights reserved.</p>
         </div>
     </aside>
 
@@ -271,7 +271,7 @@
                     </h1>
                     <div class="w-24 h-1 bg-gradient-to-r from-blue-500 to-purple-500 mx-auto rounded-full"></div>
                 </div>
-                
+        
                 <div class="flex flex-col lg:flex-row items-center gap-10">
                     <!-- Profile Photo -->
                     <div class="flex-shrink-0">
@@ -382,6 +382,69 @@
             });
 
             document.getElementById('redemptionSection').innerHTML = `
+
+            <!-- Statistics Widgets at the top -->
+            <div class="bg-white rounded-3xl shadow-xl p-8 mb-8">
+                <div class="text-center mb-8">
+                    <h2 class="text-3xl font-bold text-gray-800 mb-2">
+                        <i class="fa-solid fa-chart-pie text-blue-500 mr-3"></i>Statistic
+                    </h2>
+                    <div class="w-24 h-1 bg-gradient-to-r from-blue-400 to-green-200 mx-auto rounded-full"></div>
+                </div>
+
+                <div class="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
+                    <div class="group bg-gradient-to-br from-blue-50 to-blue-100 p-6 rounded-2xl hover:shadow-lg transition-all duration-300 border border-blue-200">
+                        <div class="flex items-center gap-4">
+                            <div class="w-12 h-12 bg-blue-600 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform">
+                                <i class="fa-solid fa-calendar-check text-white"></i>
+                            </div>
+                            <div>
+                                <div class="text-2xl font-bold text-blue-700">${guide.visitCount || 0}</div>
+                                <p class="text-sm text-blue-700">(${guide.visitCount*10}points)</p>
+                                <div class="text-sm text-gray-600">Total Visits</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="group bg-gradient-to-br from-green-50 to-green-100 p-6 rounded-2xl hover:shadow-lg transition-all duration-300 border border-green-200">
+                        <div class="flex items-center gap-4">
+                            <div class="w-12 h-12 bg-green-600 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform">
+                                <i class="fa-solid fa-users text-white"></i>
+                            </div>
+                            <div>
+                                <div class="text-2xl font-bold text-green-700">${guide.totalTourists || 0}</div>
+                                <p class="text-sm text-green-700">(${guide.totalTourists*5}points)</p>
+                                <div class="text-sm text-gray-600">Total Tourists</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="group bg-gradient-to-br from-purple-50 to-purple-100 p-6 rounded-2xl hover:shadow-lg transition-all duration-300 border border-purple-200">
+                        <div class="flex items-center gap-4">
+                            <div class="w-12 h-12 bg-purple-600 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform">
+                                <i class="fa-solid fa-star text-white"></i>
+                            </div>
+                            <div>
+                                <div class="text-2xl font-bold text-purple-700">${guide.pointsRemaining || 0}</div>
+                                <div class="text-sm text-gray-600">Points Available</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="group bg-gradient-to-br from-yellow-50 to-yellow-100 p-6 rounded-2xl hover:shadow-lg transition-all duration-300 border border-yellow-200">
+                        <div class="flex items-center gap-4">
+                            <div class="w-12 h-12 bg-yellow-600 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform">
+                                <i class="fa-solid fa-chart-line text-white"></i>
+                            </div>
+                            <div>
+                                <div class="text-2xl font-bold text-yellow-700">${guide.visitCount > 0 ? Math.round(guide.totalTourists / guide.visitCount) : 0}</div>
+                                <div class="text-sm text-gray-600">Avg per Visit</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             <div class="space-y-8">
                 <!-- Points Summary Card -->
                 <div class="bg-white rounded-3xl shadow-xl p-8">

@@ -51,7 +51,7 @@
 <body class="min-h-screen bg-pattern">
     <!-- Header -->
     <header class="fixed w-full bg-white backdrop-blur-sm shadow-lg">
-        <div class="max-w-7xl mx-auto px-6 py-4">
+        <div class="max-w-7xl mx-auto px-4">
             <div class="flex justify-between items-center">
                 <div class="flex items-center">
                     <div class="p-3 rounded-2xl">

@@ -40,7 +40,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::post('/admin/guides', [GuideController::class, 'store']);
     Route::put('/admin/guides/{id}', [GuideController::class, 'update']);
     Route::delete('/admin/guides/{id}', [GuideController::class, 'destroy']);
-    Route::post('admin/visits', [VisitController::class, 'store']);
+    Route::post('admin/visits', [VisitController::class, 'store'])->name('admin.addVisit');
     Route::post('/admin/items', [ItemController::class, 'store']);
     Route::get('/admin/items', [ItemController::class, 'index']);
     Route::put('/admin/items/{id}', [ItemController::class, 'update']);
