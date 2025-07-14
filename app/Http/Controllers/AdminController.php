@@ -88,6 +88,10 @@ class AdminController extends Controller
         $visitCount = \App\Models\Visit::count();
         $monthlyVisitCount = \App\Models\Visit::whereMonth('created_at', now()->month)->count();
         $performance = $this->calculateSystemPerformance();
+        $guides = Guide::with(['visits', 'redemptions'])
+        ->withCount('visits')
+        ->withSum('redemptions', 'points')
+        ->get();
 
         return response()->json([
             'guideCount' => $guideCount,
@@ -96,7 +100,8 @@ class AdminController extends Controller
             'touristCount' => Visit::sum('pax_count'),
             'monthlyTouristCount' => Visit::whereMonth('created_at', now()->month)->sum('pax_count'),
             'monthlyNewGuides' => Guide::whereMonth('created_at', now()->month)->count(),
-            'performance' => $performance
+            'performance' => $performance,
+            'guides' => $guides
         ]);
     }
 

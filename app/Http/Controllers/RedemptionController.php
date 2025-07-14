@@ -9,6 +9,7 @@ use App\Models\Guide;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
 use App\Models\Item;
+use Illuminate\Support\Facades\Log;
 
 class RedemptionController extends Controller
 {
@@ -137,6 +138,85 @@ class RedemptionController extends Controller
     {
         return Redemption::where('guide_id', $guideId)->orderByDesc('redeemed_at')->get();
     }
+
+    /**
+     * Redeem points for cash
+     */
+    public function redeemCash(Request $request, $guide_id)
+    {
+        $request->validate([
+            'amount' => 'required|integer|min:1',
+        ]);
+
+        $guide = Guide::findOrFail($guide_id);
+        $amount = $request->amount;
+
+        // Find the existing redemption row for this guide
+        $redemption = Redemption::where('guide_id', $guide_id)->first();
+
+        if (!$redemption) {
+            // If no row exists, create one with the guide's starting points
+            $redemption = Redemption::create([
+                'guide_id' => $guide_id,
+                'points' => $guide->earned_points, // or however you track starting points
+                'redeemed_at' => now(),
+            ]);
+        }
+
+        $remaining = $redemption->points;
+
+        // Check if guide has enough points
+        if ($amount > $remaining) {
+            return response()->json([
+                'message' => "Insufficient points. You have $remaining points available."
+            ], 400);
+        }
+
+        // Subtract redeemed points from the existing row
+        $redemption->points = $remaining - $amount;
+        $redemption->redeemed_at = now();
+        $redemption->save();
+
+        // Send WhatsApp notification about cash redemption
+        try {
+            $twilio = new \Twilio\Rest\Client(env('TWILIO_SID'), env('TWILIO_AUTH_TOKEN'));
+
+            $mobile = $guide->mobile_number;
+            if (strpos($mobile, '+') !== 0) {
+                // Assuming Sri Lanka numbers, add +94 if not present
+                $mobile = '+94' . ltrim($mobile, '0');
+            }
+
+            $message = "🎉 Cash Redemption Request Confirmed!\n\n";
+            $message .= "Dear {$guide->full_name},\n\n";
+            $message .= "Your cash redemption request has been successfully submitted:\n";
+            $message .= "💰 Amount: Rs. {$amount}\n";
+            $message .= "📊 Points Used: {$amount} points\n";
+            $message .= "📊 Remaining Points: {$redemption->points} points\n\n";
+            $message .= "Your request will be processed within 24-48 hours.\n\n";
+            $message .= "Thank you for using our services!\n";
+            $message .= "- ChauffeurGuide Team";
+
+            $twilio->messages->create(
+                'whatsapp:' . $mobile,
+                [
+                    'from' => env('TWILIO_WHATSAPP_FROM'),
+                    'body' => $message
+                ]
+            );
+        } catch (\Exception $e) {
+            // Log the error but don't fail the redemption
+            Log::error('WhatsApp notification failed: ' . $e->getMessage());
+        }
+
+        return response()->json([
+            'message' => 'Cash redemption request submitted successfully.',
+            'amount' => $amount,
+            'remaining_points' => $redemption->points,
+            'redemption' => $redemption
+        ]);
+    }
+
     /**
      * Show the redemption details for a specific guide.
      */

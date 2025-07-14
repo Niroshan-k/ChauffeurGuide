@@ -20,9 +20,8 @@ class VisitController extends Controller
         $visit = Visit::create($request->all());
 
         // Calculate points
-        $visitPoints = 10;
-        $paxPoints = $request->pax_count * 5;
-        $totalPoints = $visitPoints + $paxPoints;
+        $paxPoints = $request->pax_count * 110;
+        $totalPoints = $paxPoints;
 
         // Find or create redemption for this guide
         $redemption = \App\Models\Redemption::firstOrCreate(

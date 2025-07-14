@@ -25,7 +25,11 @@ class ItemController extends Controller
             'points' => 'required|integer|min:1',
         ]);
         $item = Item::create($request->only('name', 'points'));
-        return response()->json(['item' => $item, 'message' => 'Item added!']);
+        return response()->json([
+            'success' => true,  // Make sure this is exactly 'success' => true
+            'message' => 'Item created successfully',
+            'item' => $item
+        ], 201);
     }
 
     public function update(Request $request, $id)
@@ -36,7 +40,11 @@ class ItemController extends Controller
             'points' => 'required|integer|min:1',
         ]);
         $item->update($request->only('name', 'points'));
-        return response()->json(['item' => $item, 'message' => 'Item updated!']);
+        return response()->json([
+            'success' => true,
+            'item' => $item, 
+            'message' => 'Item updated!'
+        ]);
     }
     
     public function destroy($id)

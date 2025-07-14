@@ -30,6 +30,9 @@ Route::middleware(['auth:sanctum'])->group(function () {
 
     // Redeem points
     Route::post('/guide/{guide_id}/redeem', [RedemptionController::class, 'store']);
+    
+    // Redeem cash
+    Route::post('/guide/{guide_id}/redeem-cash', [RedemptionController::class, 'redeemCash']);
 });
 
 

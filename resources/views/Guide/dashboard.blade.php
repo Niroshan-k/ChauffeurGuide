@@ -101,6 +101,12 @@
                     <i class="fa-solid fa-gift text-lg"></i>
                     <span>Redeem Items</span>
                 </button>
+                
+                <!-- Redeem Cash -->
+                <button onclick="showSection('redeemCash')" id="redeemCashBtn" class="nav-btn flex gap-3 items-center w-full px-6 py-4 rounded-xl hover:bg-blue-50 transition-all duration-200 font-medium">
+                    <i class="fa-solid fa-money-bill-wave text-lg"></i>
+                    <span>Redeem Cash</span>
+                </button>
             </nav>
         </div>
         
@@ -137,6 +143,9 @@
             
             <!-- Profile Update Section -->
             <div id="profileUpdateSection" class="section w-full max-w-5xl mx-auto hidden"></div>
+            
+            <!-- Redeem Cash Section -->
+            <div id="redeemCashSection" class="section w-full max-w-5xl mx-auto hidden"></div>
         </div>
     </main>
 
@@ -147,6 +156,7 @@
             document.getElementById('profileSection').classList.add('hidden');
             document.getElementById('redemptionSection').classList.add('hidden');
             document.getElementById('profileUpdateSection').classList.add('hidden');
+            document.getElementById('redeemCashSection').classList.add('hidden');
             
             // Show selected section
             document.getElementById(sectionName + 'Section').classList.remove('hidden');
@@ -163,6 +173,8 @@
                 activeBtnId = 'profileBtn';
             } else if (sectionName === 'redemption') {
                 activeBtnId = 'redemptionBtn';
+            } else if (sectionName === 'redeemCash') {
+                activeBtnId = 'redeemCashBtn';
             } else if (sectionName === 'profileUpdate') {
                 // For profile update, we want to highlight the profile button since it's in the submenu
                 activeBtnId = 'profileBtn';
@@ -257,6 +269,7 @@
                 renderProfileSection(data.guide);
                 renderRedemptionSection(data.guide, data.redemption, data.items);
                 renderProfileUpdateSection(data.guide);
+                renderRedeemCashSection(data.guide);
             } catch (error) {
                 document.getElementById('error').textContent = 'Network error';
             }
@@ -400,7 +413,6 @@
                             </div>
                             <div>
                                 <div class="text-2xl font-bold text-blue-700">${guide.visitCount || 0}</div>
-                                <p class="text-sm text-blue-700">(${guide.visitCount*10}points)</p>
                                 <div class="text-sm text-gray-600">Total Visits</div>
                             </div>
                         </div>
@@ -413,7 +425,7 @@
                             </div>
                             <div>
                                 <div class="text-2xl font-bold text-green-700">${guide.totalTourists || 0}</div>
-                                <p class="text-sm text-green-700">(${guide.totalTourists*5}points)</p>
+                                <p class="text-sm text-green-700">(${guide.totalTourists*110}points)</p>
                                 <div class="text-sm text-gray-600">Total Tourists</div>
                             </div>
                         </div>
@@ -438,7 +450,7 @@
                             </div>
                             <div>
                                 <div class="text-2xl font-bold text-yellow-700">${guide.visitCount > 0 ? Math.round(guide.totalTourists / guide.visitCount) : 0}</div>
-                                <div class="text-sm text-gray-600">Avg per Visit</div>
+                                <div class="text-sm text-gray-600">Avg pax per Visit</div>
                             </div>
                         </div>
                     </div>
@@ -735,6 +747,164 @@
                     updateBtnText.textContent = 'Update';
                     updateSpinner.classList.add('hidden');
                     updateStatus.innerHTML = `<span class="text-red-600">Network error.</span>`;
+                }
+            });
+        }
+
+        function renderRedeemCashSection(guide) {
+            const pointsRemaining = guide.pointsRemaining ?? 0;
+            
+            document.getElementById('redeemCashSection').innerHTML = `
+            <div class="bg-white rounded-3xl shadow-xl p-8">
+                <div class="text-center mb-8">
+                    <h1 class="text-3xl font-bold text-gray-800 mb-2">
+                        <i class="fa-solid fa-money-bill-wave text-green-600 mr-3"></i>Redeem Cash
+                    </h1>
+                    <div class="w-24 h-1 bg-gradient-to-r from-green-500 to-blue-500 mx-auto rounded-full"></div>
+                </div>
+
+                <!-- Available Points Display -->
+                <div class="bg-gradient-to-br from-green-50 to-emerald-100 rounded-2xl p-6 mb-8">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <h3 class="text-lg font-semibold text-gray-700 mb-2">Available Points</h3>
+                            <p class="text-3xl font-bold text-green-600">${pointsRemaining} Points</p>
+                            <p class="text-sm text-gray-600 mt-1">1 Point = Rs. 1</p>
+                        </div>
+                        <div class="text-6xl text-green-500 opacity-20">
+                            <i class="fa-solid fa-coins"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Cash Redemption Form -->
+                <div class="bg-gradient-to-br from-blue-50 to-indigo-100 rounded-2xl p-6">
+                    <h3 class="text-xl font-bold text-gray-800 mb-6 flex items-center">
+                        <i class="fa-solid fa-hand-holding-dollar text-blue-600 mr-3"></i>
+                        Redeem Points for Cash
+                    </h3>
+                    
+                    <form id="redeemCashForm" class="space-y-6">
+                        <div>
+                            <label for="cashAmount" class="block text-gray-700 font-semibold mb-3">
+                                <i class="fa-solid fa-rupee-sign mr-2 text-gray-400"></i>Amount to Redeem (Rs.)
+                            </label>
+                            <input type="number" 
+                                   id="cashAmount" 
+                                   name="cashAmount" 
+                                   min="1" 
+                                   max="${pointsRemaining}" 
+                                   class="w-full px-6 py-4 border-2 border-gray-200 rounded-2xl focus:border-blue-500 focus:ring-0 text-lg"
+                                   placeholder="Enter amount (Max: Rs. ${pointsRemaining})"
+                                   required>
+                            <p class="text-sm text-gray-600 mt-2">
+                                <i class="fa-solid fa-info-circle mr-1"></i>
+                                You can redeem up to Rs. ${pointsRemaining} (${pointsRemaining} points)
+                            </p>
+                        </div>
+
+                        <div class="bg-white rounded-xl p-4 border-l-4 border-yellow-400">
+                            <h4 class="font-semibold text-gray-800 mb-2 flex items-center">
+                                <i class="fa-solid fa-exclamation-triangle text-yellow-500 mr-2"></i>
+                                Important Information
+                            </h4>
+                            <ul class="text-sm text-gray-600 space-y-1">
+                                <li>• Cash redemption requests are processed within 24-48 hours</li>
+                                <li>• A WhatsApp notification will be sent to confirm your request</li>
+                                <li>• Points will be deducted immediately upon submission</li>
+                                <li>• Minimum redemption amount: Rs. 1</li>
+                            </ul>
+                        </div>
+
+                        <div class="flex flex-col items-center gap-4 pt-4">
+                            <button type="submit" 
+                                    id="redeemCashBtn"
+                                    class="group relative w-full lg:w-auto bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white font-bold py-4 px-10 rounded-2xl transition-all duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-1 flex items-center justify-center gap-3">
+                                <span id="redeemCashBtnText" class="flex items-center gap-2">
+                                    <i class="fa-solid fa-paper-plane"></i>
+                                    Submit Redemption Request
+                                </span>
+                                <svg id="redeemCashSpinner" class="hidden animate-spin h-6 w-6 text-white" viewBox="0 0 24 24">
+                                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" fill="none"/>
+                                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z"/>
+                                </svg>
+                            </button>
+                            <div id="redeemCashStatus" class="text-center text-sm"></div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        `;
+
+            // Handle cash redemption form submission
+            document.getElementById('redeemCashForm').addEventListener('submit', async function(e) {
+                e.preventDefault();
+                
+                const redeemCashBtn = document.getElementById('redeemCashBtn');
+                const redeemCashBtnText = document.getElementById('redeemCashBtnText');
+                const redeemCashSpinner = document.getElementById('redeemCashSpinner');
+                const redeemCashStatus = document.getElementById('redeemCashStatus');
+                const cashAmountInput = document.getElementById('cashAmount');
+                
+                const amount = parseInt(cashAmountInput.value);
+                
+                // Validation
+                if (!amount || amount < 1) {
+                    redeemCashStatus.innerHTML = '<span class="text-red-600">Please enter a valid amount (minimum Rs. 1)</span>';
+                    return;
+                }
+                
+                if (amount > pointsRemaining) {
+                    redeemCashStatus.innerHTML = '<span class="text-red-600">Amount exceeds available points</span>';
+                    return;
+                }
+                
+                // Disable button and show loading
+                redeemCashBtn.disabled = true;
+                redeemCashBtnText.textContent = 'Processing...';
+                redeemCashSpinner.classList.remove('hidden');
+                redeemCashStatus.textContent = '';
+                
+                try {
+                    const response = await fetch(`/api/guide/${guideId}/redeem-cash`, {
+                        method: 'POST',
+                        headers: {
+                            'Authorization': 'Bearer ' + token,
+                            'Accept': 'application/json',
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ 
+                            amount: amount 
+                        })
+                    });
+                    
+                    const result = await response.json();
+                    
+                    // Reset button state
+                    redeemCashBtn.disabled = false;
+                    redeemCashBtnText.innerHTML = '<i class="fa-solid fa-paper-plane"></i> Submit Redemption Request';
+                    redeemCashSpinner.classList.add('hidden');
+                    
+                    if (!response.ok) {
+                        redeemCashStatus.innerHTML = `<span class="text-red-600">${result.message || 'Cash redemption failed'}</span>`;
+                        return;
+                    }
+                    
+                    // Success
+                    redeemCashStatus.innerHTML = '<span class="text-green-600 font-semibold">Cash redemption request submitted successfully! WhatsApp notification sent.</span>';
+                    cashAmountInput.value = '';
+                    
+                    // Refresh dashboard after 2 seconds to update points
+                    setTimeout(() => {
+                        window.location.reload();
+                    }, 2000);
+                    
+                } catch (error) {
+                    // Reset button state
+                    redeemCashBtn.disabled = false;
+                    redeemCashBtnText.innerHTML = '<i class="fa-solid fa-paper-plane"></i> Submit Redemption Request';
+                    redeemCashSpinner.classList.add('hidden');
+                    redeemCashStatus.innerHTML = '<span class="text-red-600">Network error. Please try again.</span>';
                 }
             });
         }
