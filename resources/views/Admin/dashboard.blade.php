@@ -783,7 +783,7 @@
             window.location.href = '/admin/profile;'
         }
 
-        function showSection(id) {
+        function showSection(id) { 
             document.getElementById('dashboardSection').style.display = id === 'dashboard' ? 'block' : 'none';
             document.getElementById('guidesSection').style.display = id === 'guides' ? 'block' : 'none';
             document.getElementById('itemsSection').style.display = id === 'items' ? 'block' : 'none';
