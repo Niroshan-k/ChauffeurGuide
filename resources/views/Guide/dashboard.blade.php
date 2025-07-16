@@ -375,11 +375,15 @@
                 <div class="group relative bg-white border-2 border-gray-200 rounded-2xl p-6 hover:border-purple-300 hover:shadow-lg transition-all duration-300">
                     <div class="flex items-center justify-between">
                         <div class="flex items-center gap-4">
-                            <div class="relative">
-                                <input type="checkbox" class="item-checkbox w-6 h-6 text-purple-600 rounded-lg border-2 border-gray-300 focus:ring-purple-500" id="item_${item.id}" value="${item.id}" data-points="${item.points}">
-                                <div class="absolute inset-0 bg-purple-600 rounded-lg opacity-0 group-hover:opacity-10 transition-opacity"></div>
+                            <div class="relative flex-shrink-0">
+                                <input type="checkbox" 
+                                    class="item-checkbox w-6 h-6 text-purple-600 rounded-lg border-2 border-gray-300 focus:ring-purple-500" 
+                                    id="item_${item.id}" 
+                                    value="${item.id}" 
+                                    data-points="${item.points}"
+                                    style="pointer-events: auto; cursor: pointer; z-index: 10;">
                             </div>
-                            <label for="item_${item.id}" class="cursor-pointer">
+                            <label for="item_${item.id}" class="cursor-pointer flex-1" onclick="event.preventDefault(); document.getElementById('item_${item.id}').click();">
                                 <h3 class="text-lg font-bold text-gray-800 group-hover:text-purple-700 transition-colors">
                                     ${item.name}
                                 </h3>
@@ -391,7 +395,7 @@
                         </div>
                     </div>
                 </div>
-            `;
+                `;
             });
 
             document.getElementById('redemptionSection').innerHTML = `
