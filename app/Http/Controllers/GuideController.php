@@ -285,50 +285,67 @@ private function calculateMonthlyPerformance($month)
     // Admin creates guide
     public function store(Request $request)
     {
-        $request->validate([
-            'full_name' => 'required|string|max:255',
-            'mobile_number' => 'required|string|unique:guides,mobile_number',
-            'date_of_birth' => 'nullable|date',
-            'email' => 'nullable|email',
-            'whatsapp_number' => 'nullable|string',
-            'profile_photo' => 'nullable|image|max:2048',
-        ]);
-
-        $data = $request->all();
-
-        if ($request->hasFile('profile_photo')) {
-            $data['profile_photo'] = $request->file('profile_photo')->store('profile_photos', 'public');
-        }
-
-        $guide = Guide::create($data);
-
-        //Send WhatsApp welcome message
         try {
-            $twilio = new Client(env('TWILIO_SID'), env('TWILIO_AUTH_TOKEN'));
-            
-            $mobile = $guide->mobile_number;
-            if (strpos($mobile, '+') !== 0) {
-                // Assuming Sri Lanka numbers, add +94 if not present
-                $mobile = '+94' . ltrim($mobile, '0');
+            $request->validate([
+                'full_name' => 'required|string|max:255',
+                'mobile_number' => 'required|string|unique:guides,mobile_number',
+                'date_of_birth' => 'nullable|date',
+                'email' => 'nullable|email',
+                'whatsapp_number' => 'nullable|string',
+                'profile_photo' => 'nullable|image|max:2048',
+            ]);
+
+            $data = $request->all();
+
+            if ($request->hasFile('profile_photo')) {
+                $data['profile_photo'] = $request->file('profile_photo')->store('profile_photos', 'public');
             }
 
-            $dashboardLink = 'https://your-app-link.com/dashboard'; // or dynamically generated link
+            $guide = Guide::create($data);
 
-            $twilio->messages->create(
-                'whatsapp:' . $mobile,
-                [
-                    'from' => env('TWILIO_WHATSAPP_FROM'),
-                    'contentSid' => 'HX4e215b7f3d45ad4d0a4c67b9e81212c9', 
-                    'contentVariables' => json_encode([
-                        '1' => $dashboardLink
-                    ]),
-                ]
-            );
+            //Send WhatsApp welcome message
+            try {
+                $twilio = new Client(env('TWILIO_SID'), env('TWILIO_AUTH_TOKEN'));
+                
+                $mobile = $guide->mobile_number;
+                if (strpos($mobile, '+') !== 0) {
+                    // Assuming Sri Lanka numbers, add +94 if not present
+                    $mobile = '+94' . ltrim($mobile, '0');
+                }
+
+                $dashboardLink = 'https://your-app-link.com/dashboard'; // or dynamically generated link
+
+                $twilio->messages->create(
+                    'whatsapp:' . $mobile,
+                    [
+                        'from' => env('TWILIO_WHATSAPP_FROM'),
+                        'contentSid' => 'HX4e215b7f3d45ad4d0a4c67b9e81212c9', 
+                        'contentVariables' => json_encode([
+                            '1' => $dashboardLink
+                        ]),
+                    ]
+                );
+            } catch (\Exception $e) {
+                // Optionally log or handle the error
+            }
+
+            return response()->json([
+                'success' => true,  // ✅ This is what your JavaScript is looking for
+                'message' => 'Guide added successfully!',
+                'guide' => $guide
+            ], 201);
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Validation failed',
+                'errors' => $e->errors()
+            ], 422);
         } catch (\Exception $e) {
-            // Optionally log or handle the error
+            return response()->json([
+                'success' => false,
+                'message' => 'Server error: ' . $e->getMessage()
+            ], 500);
         }
-
-        return response()->json(['message' => 'Guide registered successfully.', 'guide' => $guide]);
     }
 
     public function index()

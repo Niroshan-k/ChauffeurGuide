@@ -105,7 +105,7 @@
                     </div>
                     <span class="font-medium text-gray-700">Guides</span>
                 </button>
-                <button onclick="showItemsSection()" class="nav-item flex items-center w-full px-4 py-3 text-left rounded-xl transition-all duration-200 hover:bg-blue-50 hover:shadow-sm">
+                <button onclick="showSection('items')" class="nav-item flex items-center w-full px-4 py-3 text-left rounded-xl transition-all duration-200 hover:bg-blue-50 hover:shadow-sm">
                     <div class="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center mr-3">
                         <i class="fa-solid fa-gifts text-purple-600"></i>
                     </div>
@@ -468,7 +468,7 @@
                         </div>
                         <div>
                             <label class="block text-gray-700 font-semibold mb-1">Profile Photo</label>
-                            <input type="file" name="profile_photo" accept="image/*" class="w-full px-4 py-3 border-2 border-blue-200 rounded-lg focus:ring-2 focus:ring-blue-400 transition" required>
+                            <input type="file" name="profile_photo" accept="image/*" class="w-full px-4 py-3 border-2 border-blue-200 rounded-lg focus:ring-2 focus:ring-blue-400 transition">
                         </div>
                         <div id="addGuideStatus" class="text-center text-sm"></div>
                         <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-xl transition flex items-center justify-center gap-2">
@@ -675,49 +675,136 @@
 
         // Handle form submission
         document.getElementById('addGuideForm').addEventListener('submit', async (e) => {
-            e.preventDefault();
+    e.preventDefault();
 
-            const btnText = document.getElementById('addGuideBtnText');
-            const spinner = document.getElementById('addGuideSpinner');
-            const status = document.getElementById('addGuideStatus');
+    const btnText = document.getElementById('addGuideBtnText');
+    const spinner = document.getElementById('addGuideSpinner');
+    const status = document.getElementById('addGuideStatus');
 
-            // Show loading state
-            btnText.textContent = 'Adding...';
-            spinner.classList.remove('hidden');
-            status.innerHTML = '';
+    // Show loading state
+    btnText.textContent = 'Adding...';
+    spinner.classList.remove('hidden');
+    status.innerHTML = '';
 
-            try {
-                const formData = new FormData(e.target);
+    try {
+        const formData = new FormData(e.target);
 
-                const response = await fetch('/api/admin/guides', {
-                    method: 'POST',
-                    headers: {
-                        'Authorization': 'Bearer ' + token,
-                        'Accept': 'application/json'
-                    },
-                    body: formData
-                });
+        const response = await fetch('/api/admin/guides', {
+            method: 'POST',
+            headers: {
+                'Authorization': 'Bearer ' + token,
+                'Accept': 'application/json'
+            },
+            body: formData
+        });
 
-                const data = await response.json();
+        const data = await response.json();
 
-                if (response.ok && data.success) {
-                    status.innerHTML = '<span class="text-green-600">Guide added successfully!</span>';
-                    setTimeout(() => {
-                        closeAddGuideModal();
-                        refreshDashboard(); // Refresh the guide table
-                    }, 1500);
-                } else {
-                    status.innerHTML = `<span class="text-red-600">${data.message || 'Failed to add guide'}</span>`;
-                }
-            } catch (error) {
-                status.innerHTML = '<span class="text-red-600">Network error. Please try again.</span>';
-                console.error('Error:', error);
-            } finally {
-                // Reset button state
-                btnText.textContent = 'Add Guide';
-                spinner.classList.add('hidden');
+        if (response.ok && data.success) {
+            status.innerHTML = '<span class="text-green-600">Guide added successfully!</span>';
+            
+            // Refresh both dashboard stats and guides table
+            await refreshDashboard();
+            await refreshGuidesTable(); // Add this line
+            
+            setTimeout(() => {
+                closeAddGuideModal();
+            }, 1500);
+        } else {
+            status.innerHTML = `<span class="text-red-600">${data.message || 'Failed to add guide'}</span>`;
+        }
+    } catch (error) {
+        status.innerHTML = '<span class="text-red-600">Network error. Please try again.</span>';
+        console.error('Error:', error);
+    } finally {
+        // Reset button state
+        btnText.textContent = 'Add Guide';
+        spinner.classList.add('hidden');
+    }
+});
+
+
+// Add this new function to refresh only the guides table
+async function refreshGuidesTable() {
+    try {
+        const guidesResponse = await fetch('/api/admin/guides', {
+            headers: {
+                'Authorization': 'Bearer ' + token,
+                'Accept': 'application/json'
             }
         });
+        
+        if (guidesResponse.ok) {
+            const guidesData = await guidesResponse.json();
+            
+            // Update table body
+            const tableBody = document.querySelector('#guidesSection tbody');
+            if (tableBody && guidesData.guides) {
+                tableBody.innerHTML = guidesData.guides.map(guide => `
+                    <tr id="guide-row-${guide.id}" class="hover:bg-blue-50/50 transition-colors duration-200">
+                        <!-- Guide Info -->
+                        <td class="px-6 py-4">
+                            <div class="flex items-center space-x-4">
+                                ${guide.profile_photo
+                                    ? `<img src="/storage/${guide.profile_photo}" alt="Profile" class="w-12 h-12 rounded-xl object-cover border-2 border-white shadow-lg">`
+                                    : `<div class="w-12 h-12 rounded-xl bg-gradient-to-br from-gray-200 to-gray-300 flex items-center justify-center shadow-lg">
+                                        <i class="fas fa-user text-gray-500"></i>
+                                       </div>`
+                                }
+                                <div>
+                                    <div class="font-bold text-gray-800">${guide.full_name}</div>
+                                    <div class="text-sm text-gray-500">ID: ${guide.id}</div>
+                                </div>
+                            </div>
+                        </td>
+                        
+                        <!-- Contact Info -->
+                        <td class="px-6 py-4">
+                            <div class="text-sm">
+                                <div class="text-gray-800">${guide.email || 'No email'}</div>
+                                <div class="text-gray-500">${guide.mobile_number || 'No phone'}</div>
+                            </div>
+                        </td>
+                        
+                        <!-- Performance Stats -->
+                        <td class="px-6 py-4 text-center">
+                            <div class="flex justify-center space-x-4">
+                                <div class="text-center">
+                                    <div class="text-lg font-bold text-blue-600">${guide.visits_count || 0}</div>
+                                    <div class="text-xs text-gray-500">Visits</div>
+                                </div>
+                                <div class="text-center">
+                                    <div class="text-lg font-bold text-yellow-600">${guide.redemptions_sum_points || 0}</div>
+                                    <div class="text-xs text-gray-500">Points</div>
+                                </div>
+                            </div>
+                        </td>
+                        
+                        <!-- Quick Actions -->
+                        <td class="px-6 py-4 text-center">
+                            <button onclick="openAddVisitModal(${guide.id})" 
+                                    class="px-4 py-2 bg-gradient-to-r from-green-600 to-green-700 text-white rounded-xl text-sm hover:shadow-lg transition-all duration-200 flex items-center space-x-2 mx-auto">
+                                <i class="fa-solid fa-plus"></i>
+                                <span>Add Visit</span>
+                            </button>
+                        </td>
+                        
+                        <!-- Actions -->
+                        <td class="px-6 py-4 text-center">
+                            <a href="/admin/guide/${guide.id}/update"
+                               class="px-4 py-2 bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-xl text-sm hover:shadow-lg transition-all duration-200 inline-flex items-center space-x-2">
+                                <i class="fa-solid fa-eye"></i>
+                                <span>View</span>
+                            </a>
+                        </td>
+                    </tr>
+                `).join('');
+            }
+        }
+    } catch (error) {
+        console.error('Error refreshing guides table:', error);
+    }
+}
 
         // Close modal when clicking outside
         document.getElementById('addGuideModal').addEventListener('click', (e) => {
@@ -784,17 +871,34 @@
         }
 
         function showSection(id) { 
-            document.getElementById('dashboardSection').style.display = id === 'dashboard' ? 'block' : 'none';
-            document.getElementById('guidesSection').style.display = id === 'guides' ? 'block' : 'none';
-            document.getElementById('itemsSection').style.display = id === 'items' ? 'block' : 'none';
+        // Hide all sections
+        document.getElementById('dashboardSection').style.display = id === 'dashboard' ? 'block' : 'none';
+        document.getElementById('guidesSection').style.display = id === 'guides' ? 'block' : 'none';
+        document.getElementById('itemsSection').style.display = id === 'items' ? 'block' : 'none';
 
-            // Close sidebar on mobile after navigation
-            if (window.innerWidth < 768) {
-                document.getElementById('sidebar').classList.add('-translate-x-full');
-                document.getElementById('overlay').classList.add('hidden');
-                document.body.classList.remove('overflow-hidden');
-            }
+        // Update active states for all nav items
+        document.querySelectorAll('.nav-item').forEach(item => {
+            item.classList.remove('active');
+        });
+
+        // Load data for specific sections
+        if (id === 'items') {
+            loadItems(); // Add this line to load items when switching to items section
         }
+
+        // Add active class to the clicked button
+        const activeButton = document.querySelector(`button[onclick*="showSection('${id}')"]`);
+        if (activeButton) {
+            activeButton.classList.add('active');
+        }
+
+        // Close sidebar on mobile after navigation
+        if (window.innerWidth < 768) {
+            document.getElementById('sidebar').classList.add('-translate-x-full');
+            document.getElementById('overlay').classList.add('hidden');
+            document.body.classList.remove('overflow-hidden');
+        }
+    }
 
         async function refreshDashboard() {
             try {
@@ -1439,9 +1543,8 @@
             // Load items data
             loadItems();
 
-            // Update navigation active state
-            document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
-            event.target.closest('.nav-item').classList.add('active');
+            // Update navigation active state (this is now handled in showSection)
+            // Remove the manual active state code since showSection handles it
         }
 
         async function loadItems() {
