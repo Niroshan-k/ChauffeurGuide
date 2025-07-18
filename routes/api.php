@@ -56,6 +56,10 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::get('/test-query', function (\Illuminate\Http\Request $request) {
         return response()->json(['q' => $request->input('q')]);
     });
+
+     // Redemption approval routes for admin
+    Route::get('/admin/redemption-requests', [RedemptionController::class, 'getPendingRequests']);
+    Route::post('/admin/redemption-requests/{id}/approve', [RedemptionController::class, 'approveRequest']);
     
     // Admin updates visit and tourist count
     Route::post('/admin/guides/{id}/update-activity', [AdminController::class, 'updateActivity']);

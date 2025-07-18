@@ -601,7 +601,7 @@
                             return;
                         }
 
-                        redeemStatus.innerHTML = `<span class="text-green-600 font-semibold">Redemption successful!</span>`;
+                        redeemStatus.innerHTML = `<span class="text-green-600 font-semibold">Redemption successful! wait for the admin Approval!</span>`;
                         setTimeout(() => window.location.reload(), 1200);
 
                     } catch (err) {

@@ -13,50 +13,7 @@ use Illuminate\Support\Facades\Log;
 
 class RedemptionController extends Controller
 {
-    // public function store(Request $request, $guide_id)
-    // {
-    //     $request->validate([
-    //         'points' => 'required|integer|min:1',
-    //     ]);
-
-    //     $guide = Guide::findOrFail($guide_id);
-    //     $remaining = $guide->pointsRemaining();
-
-    //     // Calculate the maximum redeemable points (must leave at least 10)
-    //     $maxRedeemable = max($remaining - 10, 0);
-
-    //     if ($maxRedeemable <= 0) {
-    //         return response()->json([
-    //             'message' => "You need at least 11 points to redeem. You currently have only $remaining points."
-    //         ], 400);
-    //     }
-
-    //     if ($request->points > $maxRedeemable) {
-    //         return response()->json([
-    //             'message' => "You only have $remaining points. You can redeem up to $maxRedeemable points."
-    //         ], 400);
-    //     }
-
-    //     // Update the existing redemption row for this guide
-    //     $redemption = $guide->redemptions()->first();
-    //     if ($redemption) {
-    //         $redemption->points -= $request->points;
-    //         $redemption->redeemed_at = Carbon::now();
-    //         $redemption->save();
-    //     } else {
-    //         // If no row exists, create one (should only happen for new guides)
-    //         $redemption = $guide->redemptions()->create([
-    //             'points' => 0,
-    //             'redeemed_at' => Carbon::now(),
-    //         ]);
-    //     }
-
-    //     return response()->json([
-    //         'message' => 'Points redeemed.',
-    //         'redemption' => $redemption
-    //     ]);
-    // }
-
+    // Update the store method in RedemptionController.php
     public function store(Request $request, $guide_id)
     {
         $request->validate([
@@ -75,7 +32,7 @@ class RedemptionController extends Controller
             // If no row exists, create one with the guide's starting points
             $redemption = Redemption::create([
                 'guide_id' => $guide_id,
-                'points' => $guide->earned_points, // or however you track starting points
+                'points' => $guide->earned_points,
                 'redeemed_at' => now(),
             ]);
         }
@@ -96,22 +53,123 @@ class RedemptionController extends Controller
             ], 400);
         }
 
-        // Subtract redeemed points from the existing row
-        $redemption->points = $remaining - $totalPoints;
-        $redemption->redeemed_at = now();
-        $redemption->save();
+        // DON'T deduct points here - only create the request
+        // Points will be deducted only when admin approves
 
-        // Send WhatsApp congratulation message
+        $redemptionRequest = \App\Models\RedemptionRequest::create([
+            'guide_id' => $guide_id,
+            'item_ids' => $request->item_ids,
+            'item_details' => $items->map(function ($item) {
+                return [
+                    'id' => $item->id,
+                    'name' => $item->name,
+                    'points' => $item->points
+                ];
+            })->toArray(),
+            'total_points' => $totalPoints,
+            'status' => 'pending'
+        ]);
+
+        return response()->json([
+            'message' => 'Redemption request submitted successfully. Please wait for admin approval.',
+            'request_id' => $redemptionRequest->id,
+            'status' => 'pending'
+        ]);
+    }
+
+    // Update the approveRequest method in RedemptionController.php
+    public function approveRequest(Request $request, $requestId)
+    {
+        $request->validate([
+            'action' => 'required|in:approve,reject',
+            'admin_notes' => 'nullable|string|max:500'
+        ]);
+
+        $redemptionRequest = \App\Models\RedemptionRequest::findOrFail($requestId);
+        
+        if ($redemptionRequest->status !== 'pending') {
+            return response()->json([
+                'message' => 'This request has already been processed.'
+            ], 400);
+        }
+
+        $guide = $redemptionRequest->guide;
+        $action = $request->action;
+
+        // Get the authenticated admin (fix for the error)
+        $admin = auth('sanctum')->user();
+        $adminId = $admin ? $admin->id : null;
+
+        if ($action === 'approve') {
+            // Process the redemption - ONLY NOW deduct points
+            $redemption = Redemption::where('guide_id', $redemptionRequest->guide_id)->first();
+            
+            if (!$redemption) {
+                $redemption = Redemption::create([
+                    'guide_id' => $redemptionRequest->guide_id,
+                    'points' => $guide->earned_points,
+                    'redeemed_at' => now(),
+                ]);
+            }
+
+            // Check again if guide still has enough points (in case points changed)
+            if ($redemption->points < $redemptionRequest->total_points) {
+                return response()->json([
+                    'message' => 'Guide no longer has sufficient points for this redemption.'
+                ], 400);
+            }
+
+            // Subtract points ONLY when approved
+            $redemption->points -= $redemptionRequest->total_points;
+            $redemption->redeemed_at = now();
+            $redemption->save();
+
+            // Update request status
+            $redemptionRequest->update([
+                'status' => 'approved',
+                'approved_by' => $adminId,
+                'approved_at' => now(),
+                'admin_notes' => $request->admin_notes
+            ]);
+
+            // Send WhatsApp approval message
+            $this->sendApprovalMessage($guide, $redemptionRequest->item_details);
+
+            return response()->json([
+                'message' => 'Redemption request approved successfully. Points have been deducted.',
+                'redemption' => $redemption
+            ]);
+
+        } else {
+            // Reject the request - NO points deduction needed since they weren't deducted
+            $redemptionRequest->update([
+                'status' => 'rejected',
+                'approved_by' => $adminId,
+                'approved_at' => now(),
+                'admin_notes' => $request->admin_notes
+            ]);
+
+            // Send WhatsApp rejection message
+            $this->sendRejectionMessage($guide, $request->admin_notes);
+
+            return response()->json([
+                'message' => 'Redemption request rejected. Points remain with the guide.',
+            ]);
+        }
+    }
+
+    // Add method to send approval WhatsApp message
+    private function sendApprovalMessage($guide, $itemDetails)
+    {
         try {
             $twilio = new \Twilio\Rest\Client(env('TWILIO_SID'), env('TWILIO_AUTH_TOKEN'));
 
             $mobile = $guide->mobile_number;
             if (strpos($mobile, '+') !== 0) {
-                // Assuming Sri Lanka numbers, add +94 if not present
                 $mobile = '+94' . ltrim($mobile, '0');
             }
 
-            $itemNames = $items->pluck('name')->toArray();
+            $itemNames = array_column($itemDetails, 'name');
             $itemList = implode(', ', $itemNames);
 
             $twilio->messages->create(
@@ -125,12 +183,51 @@ class RedemptionController extends Controller
                 ]
             );
         } catch (\Exception $e) {
-            // Optionally log or handle the error
+            Log::error('WhatsApp approval notification failed: ' . $e->getMessage());
         }
+    }
+
+    // Add method to send rejection WhatsApp message
+    private function sendRejectionMessage($guide, $reason)
+    {
+        try {
+            $twilio = new \Twilio\Rest\Client(env('TWILIO_SID'), env('TWILIO_AUTH_TOKEN'));
+
+            $mobile = $guide->mobile_number;
+            if (strpos($mobile, '+') !== 0) {
+                $mobile = '+94' . ltrim($mobile, '0');
+            }
+
+            $message = "❌ Your redemption request has been rejected.\n\n";
+            $message .= "✅ Your points remain unchanged.\n";
+            if ($reason) {
+                $message .= "\n📝 Reason: " . $reason . "\n";
+            }
+            $message .= "\nYou can submit a new request anytime.\n";
+            $message .= "- ChauffeurGuide Team";
+
+            $twilio->messages->create(
+                'whatsapp:' . $mobile,
+                [
+                    'from' => env('TWILIO_WHATSAPP_FROM'),
+                    'body' => $message
+                ]
+            );
+        } catch (\Exception $e) {
+            Log::error('WhatsApp rejection notification failed: ' . $e->getMessage());
+        }
+    }
+
+    // Add method to get pending requests for admin
+    public function getPendingRequests()
+    {
+        $requests = \App\Models\RedemptionRequest::with('guide')
+            ->where('status', 'pending')
+            ->orderBy('created_at', 'desc')
+            ->get();
 
         return response()->json([
-            'message' => 'Redemption successful.',
-            'redemption' => $redemption
+            'requests' => $requests
         ]);
     }
 

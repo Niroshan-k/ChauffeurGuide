@@ -111,6 +111,12 @@
                     </div>
                     <span class="font-medium text-gray-700">Items</span>
                 </button>
+                <button onclick="showRedemptionRequests()" class="nav-item flex items-center w-full px-4 py-3 text-left rounded-xl transition-all duration-200 hover:bg-blue-50 hover:shadow-sm">
+                    <div class="w-10 h-10 bg-orange-100 rounded-lg flex items-center justify-center mr-3">
+                        <i class="fa-solid fa-clipboard-check text-orange-600"></i>
+                    </div>
+                    <span class="font-medium text-gray-700">Redemption Requests</span>
+                </button>
             </nav>
         </div>
         <div class="p-6 border-t border-blue-100">
@@ -600,6 +606,33 @@
                 </div>
             </div>
         </div>
+
+        <!-- Redemption Requests Section -->
+        <section id="redemptionRequestsSection" class="hidden space-y-8">
+            <div class="bg-white/80 backdrop-blur-sm rounded-3xl p-8 shadow-lg border border-white/20">
+                <h2 class="text-3xl font-bold gradient-text mb-2">Redemption Requests</h2>
+                <p class="text-gray-600">Approve or reject item redemption requests from guides</p>
+            </div>
+
+            <div class="bg-white/80 backdrop-blur-sm rounded-3xl shadow-lg border border-white/20 overflow-hidden">
+                <div class="overflow-x-auto">
+                    <table class="w-full">
+                        <thead class="bg-gradient-to-r from-blue-600 to-blue-700 text-white">
+                            <tr>
+                                <th class="px-6 py-4 text-left font-semibold">Guide</th>
+                                <th class="px-6 py-4 text-left font-semibold">Items Requested</th>
+                                <th class="px-6 py-4 text-center font-semibold">Total Points</th>
+                                <th class="px-6 py-4 text-center font-semibold">Status</th>
+                                <th class="px-6 py-4 text-center font-semibold">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Populated by JavaScript -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
     </main>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>
@@ -871,34 +904,38 @@ async function refreshGuidesTable() {
         }
 
         function showSection(id) { 
-        // Hide all sections
-        document.getElementById('dashboardSection').style.display = id === 'dashboard' ? 'block' : 'none';
-        document.getElementById('guidesSection').style.display = id === 'guides' ? 'block' : 'none';
-        document.getElementById('itemsSection').style.display = id === 'items' ? 'block' : 'none';
+            // Hide all sections
+            document.getElementById('dashboardSection').style.display = id === 'dashboard' ? 'block' : 'none';
+            document.getElementById('guidesSection').style.display = id === 'guides' ? 'block' : 'none';
+            document.getElementById('itemsSection').style.display = id === 'items' ? 'block' : 'none';
+            document.getElementById('redemptionRequestsSection').style.display = id === 'redemptionRequests' ? 'block' : 'none'; // Add this line
 
-        // Update active states for all nav items
-        document.querySelectorAll('.nav-item').forEach(item => {
-            item.classList.remove('active');
-        });
+            // Update active states for all nav items
+            document.querySelectorAll('.nav-item').forEach(item => {
+                item.classList.remove('active');
+            });
 
-        // Load data for specific sections
-        if (id === 'items') {
-            loadItems(); // Add this line to load items when switching to items section
+            // Load data for specific sections
+            if (id === 'items') {
+                loadItems(); // Load items when switching to items section
+            } else if (id === 'redemptionRequests') {
+                loadRedemptionRequests(); // Load redemption requests when switching to that section
+            }
+
+            // Add active class to the clicked button
+            const activeButton = document.querySelector(`button[onclick*="showSection('${id}')"]`) || 
+                                document.querySelector(`button[onclick*="showRedemptionRequests()"]`);
+            if (activeButton) {
+                activeButton.classList.add('active');
+            }
+
+            // Close sidebar on mobile after navigation
+            if (window.innerWidth < 768) {
+                document.getElementById('sidebar').classList.add('-translate-x-full');
+                document.getElementById('overlay').classList.add('hidden');
+                document.body.classList.remove('overflow-hidden');
+            }
         }
-
-        // Add active class to the clicked button
-        const activeButton = document.querySelector(`button[onclick*="showSection('${id}')"]`);
-        if (activeButton) {
-            activeButton.classList.add('active');
-        }
-
-        // Close sidebar on mobile after navigation
-        if (window.innerWidth < 768) {
-            document.getElementById('sidebar').classList.add('-translate-x-full');
-            document.getElementById('overlay').classList.add('hidden');
-            document.body.classList.remove('overflow-hidden');
-        }
-    }
 
         async function refreshDashboard() {
             try {
@@ -1853,4 +1890,126 @@ async function refreshGuidesTable() {
                 });
             }
         });
+
+        // Add this to your admin dashboard JavaScript
+        function showRedemptionRequests() {
+            showSection('redemptionRequests');
+        }
+
+        async function loadRedemptionRequests() {
+            try {
+                const response = await fetch('/api/admin/redemption-requests', {
+                    headers: {
+                        'Authorization': 'Bearer ' + token,
+                        'Accept': 'application/json'
+                    }
+                });
+
+                const data = await response.json();
+                
+                const tableBody = document.querySelector('#redemptionRequestsSection tbody');
+                if (tableBody && data.requests) {
+                    tableBody.innerHTML = data.requests.map(request => `
+                        <tr class="hover:bg-blue-50/50 transition-colors duration-200">
+                            <td class="px-6 py-4">
+                                <div class="font-bold text-gray-800">${request.guide.full_name}</div>
+                                <div class="text-sm text-gray-500">ID: ${request.guide.id}</div>
+                            </td>
+                            <td class="px-6 py-4">
+                                ${request.item_details.map(item => `${item.name} (${item.points} pts)`).join(', ')}
+                            </td>
+                            <td class="px-6 py-4 text-center">
+                                <span class="font-bold text-blue-600">${request.total_points}</span>
+                            </td>
+                            <td class="px-6 py-4 text-center">
+                                <span class="px-3 py-1 text-xs font-medium bg-yellow-100 text-yellow-800 rounded-full">
+                                    ${request.status}
+                                </span>
+                            </td>
+                            <td class="px-6 py-4 text-center">
+                                <div class="flex space-x-2 justify-center">
+                                    <button onclick="approveRedemption(${request.id})" 
+                                            class="px-3 py-1 bg-green-600 text-white rounded-lg text-sm hover:bg-green-700">
+                                        Approve
+                                    </button>
+                                    <button onclick="rejectRedemption(${request.id})" 
+                                            class="px-3 py-1 bg-red-600 text-white rounded-lg text-sm hover:bg-red-700">
+                                        Reject
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                    `).join('');
+                }
+            } catch (error) {
+                console.error('Error loading redemption requests:', error);
+            }
+        }
+
+        async function approveRedemption(requestId) {
+            const notes = prompt('Enter approval notes (optional):');
+            
+            try {
+                const response = await fetch(`/api/admin/redemption-requests/${requestId}/approve`, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': 'Bearer ' + token,
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        action: 'approve',
+                        admin_notes: notes
+                    })
+                });
+
+                const data = await response.json();
+                
+                if (response.ok) {
+                    alert('Redemption approved successfully!');
+                    loadRedemptionRequests(); // Refresh the table
+                } else {
+                    alert('Error: ' + data.message);
+                }
+            } catch (error) {
+                console.error('Error approving redemption:', error);
+                alert('Network error. Please try again.');
+            }
+        }
+
+        async function rejectRedemption(requestId) {
+            const reason = prompt('Enter rejection reason:');
+            
+            if (!reason) {
+                alert('Please provide a reason for rejection.');
+                return;
+            }
+            
+            try {
+                const response = await fetch(`/api/admin/redemption-requests/${requestId}/approve`, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': 'Bearer ' + token,
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        action: 'reject',
+                        admin_notes: reason
+                    })
+                });
+
+                const data = await response.json();
+                
+                if (response.ok) {
+                    alert('Redemption rejected.');
+                    loadRedemptionRequests(); // Refresh the table
+                } else {
+                    alert('Error: ' + data.message);
+                }
+            } catch (error) {
+                console.error('Error rejecting redemption:', error);
+                alert('Network error. Please try again.');
+            }
+        }
     </script>
